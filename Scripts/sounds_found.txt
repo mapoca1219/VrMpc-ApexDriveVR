@@ -1,0 +1,15 @@
+Class SoundWave: 10 assets found
+   /Engine/VREditor/Sounds/UI/Drop_Item_From_ContentBrowser
+   /Engine/VREditor/Sounds/UI/Gizmo_Handle_Clicked
+   /Engine/VREditor/Sounds/UI/Object_PickUp
+   /Engine/VREditor/Sounds/UI/Object_Snaps_To_Another_Actor
+   /Engine/VREditor/Sounds/UI/Object_Snaps_To_Grid
+   /Engine/VREditor/Sounds/UI/Scaling_Down
+   /Engine/VREditor/Sounds/UI/Scaling_Up
+   /Engine/VREditor/Sounds/UI/Selection_Changes
+   /Game/XRFramework/Audio/Fire01
+   /Game/Weapons/GrenadeLauncher/Audio/FirstPersonTemplateWeaponFire02
+Class SoundCue: 1 assets found
+   /Game/XRFramework/Audio/Fire_Cue
+Class SoundBase: 0 assets found
+Class MetaSoundSource: 0 assets found

@@ -1,0 +1,3 @@
+Wheel: Triangles=7852, Vertices=7076
+Chassis: Triangles=345762, Vertices=288600
+Ioniq: Triangles=2492577, Vertices=1852248

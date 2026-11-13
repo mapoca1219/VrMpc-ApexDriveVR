@@ -1,0 +1,7 @@
+Updated torque_curve export_text:
+(EditorCurveData=(Keys=((Value=400.000000),(Time=6000.000000,Value=550.000000)),DefaultValue=400.000000,PreInfinityExtrap=RCCE_Constant,PostInfinityExtrap=RCCE_Constant),ExternalCurve="/Script/Engine.CurveFloat'/Game/Blueprints/Curve_Torque.Curve_Torque'")
+
+After set_editor_property export_text:
+(EditorCurveData=(Keys=((Value=400.000000),(Time=6000.000000,Value=550.000000)),DefaultValue=400.000000,PreInfinityExtrap=RCCE_Constant,PostInfinityExtrap=RCCE_Constant),ExternalCurve="/Script/Engine.CurveFloat'/Game/Blueprints/Curve_Torque.Curve_Torque'")
+
+Successfully compiled and saved BP_VrVehiclePawn!

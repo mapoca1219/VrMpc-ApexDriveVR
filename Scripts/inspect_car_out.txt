@@ -1,0 +1,221 @@
+=== INSPECTING SM_Merkurs_Chassis ===
+Mesh: SM_Merkurs_Chassis, Num Sections: 46
+  Slot 0: Metal_-_Chrome
+  Slot 1: M_TrueClearGlass
+  Slot 2: M_SteeringWheel_Alcantara
+  Slot 3: WorldGridMaterial
+  Slot 4: Metal_-_Black_-_Rough_0_2
+  Slot 5: WorldGridMaterial
+  Slot 6: WorldGridMaterial
+  Slot 7: M_SteeringWheel_Alcantara
+  Slot 8: Metal_-_Chrome
+  Slot 9: WorldGridMaterial
+  Slot 10: WorldGridMaterial
+  Slot 11: M_SteeringWheel_Alcantara
+  Slot 12: Metal_-_Chrome
+  Slot 13: WorldGridMaterial
+  Slot 14: WorldGridMaterial
+  Slot 15: Glass_-_Red
+  Slot 16: M_TrueClearGlass
+  Slot 17: Car_Paint_-_Red_002
+  Slot 18: M_TrueClearGlass
+  Slot 19: M_TrueClearGlass
+  Slot 20: Metal_-_Chrome
+  Slot 21: Metal_-_Black_-_Rough_0_2
+  Slot 22: WorldGridMaterial
+  Slot 23: Tire
+  Slot 24: Metal_-_Chrome
+  Slot 25: WorldGridMaterial
+  Slot 26: Metal_-_Black_-_Rough_0_2
+  Slot 27: Car_Paint_-_Black
+  Slot 28: WorldGridMaterial
+  Slot 29: WorldGridMaterial
+  Slot 30: Metal_-_Black_-_Rough_0_2
+  Slot 31: WorldGridMaterial
+  Slot 32: M_TrueClearGlass
+  Slot 33: WorldGridMaterial
+  Slot 34: Glass_-_Clear_001
+  Slot 35: WorldGridMaterial
+  Slot 36: WorldGridMaterial
+  Slot 37: WorldGridMaterial
+  Slot 38: WorldGridMaterial
+  Slot 39: M_SteeringWheel_Alcantara
+  Slot 40: Metal_-_Black_-_Rough_0_2
+  Slot 41: Car_Paint_-_Black
+  Slot 42: M_TrueClearGlass
+  Slot 43: M_TrueClearGlass
+  Slot 44: WorldGridMaterial
+  Slot 45: WorldGridMaterial
+
+=== INSPECTING LEVEL ACTORS ===
+
+Actor: Rival_Racer_1 (Class: BP_VrVehiclePawn_C)
+  Comp: ChassisMeshComponent | StaticMesh: SM_Merkurs_Chassis | NumMats: 46
+    Mat[0]: Metal_-_Chrome
+    Mat[1]: M_TrueClearGlass
+    Mat[2]: M_SteeringWheel_Alcantara
+    Mat[3]: WorldGridMaterial
+    Mat[4]: Metal_-_Black_-_Rough_0_2
+    Mat[17]: M_Paint_Gold_Hypercar
+  Comp: DashboardBackplateMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: DashboardWoodTrimMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: AmbientLightStripMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_Siren_Red
+  Comp: CentralTouchscreenMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: BrakePedalMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: ThrottlePedalMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: SteeringColumnMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: SteeringWheelVisualMesh | StaticMesh: SM_Steering_Wheel_Centered | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: GearShiftLeverMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: GearShiftKnobMesh | StaticMesh: Sphere | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: EngineStartButtonMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: DefaultMaterial
+  Comp: NitroButtonMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: DefaultMaterial
+
+Actor: Rival_Racer_2 (Class: BP_VrVehiclePawn_C)
+  Comp: ChassisMeshComponent | StaticMesh: SM_Merkurs_Chassis | NumMats: 46
+    Mat[0]: Metal_-_Chrome
+    Mat[1]: M_TrueClearGlass
+    Mat[2]: M_SteeringWheel_Alcantara
+    Mat[3]: WorldGridMaterial
+    Mat[4]: Metal_-_Black_-_Rough_0_2
+    Mat[17]: M_Paint_Cyan_Electric
+  Comp: DashboardBackplateMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: DashboardWoodTrimMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: AmbientLightStripMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_Siren_Red
+  Comp: CentralTouchscreenMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: BrakePedalMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: ThrottlePedalMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: SteeringColumnMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: SteeringWheelVisualMesh | StaticMesh: SM_Steering_Wheel_Centered | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: GearShiftLeverMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: GearShiftKnobMesh | StaticMesh: Sphere | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: EngineStartButtonMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: DefaultMaterial
+  Comp: NitroButtonMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: DefaultMaterial
+
+Actor: Rival_Racer_3 (Class: BP_VrVehiclePawn_C)
+  Comp: ChassisMeshComponent | StaticMesh: SM_Merkurs_Chassis | NumMats: 46
+    Mat[0]: Metal_-_Chrome
+    Mat[1]: M_TrueClearGlass
+    Mat[2]: M_SteeringWheel_Alcantara
+    Mat[3]: WorldGridMaterial
+    Mat[4]: Metal_-_Black_-_Rough_0_2
+    Mat[17]: M_Paint_Lime_Sport
+  Comp: DashboardBackplateMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: DashboardWoodTrimMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: AmbientLightStripMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_Siren_Red
+  Comp: CentralTouchscreenMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: BrakePedalMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: ThrottlePedalMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: SteeringColumnMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: SteeringWheelVisualMesh | StaticMesh: SM_Steering_Wheel_Centered | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: GearShiftLeverMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: GearShiftKnobMesh | StaticMesh: Sphere | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: EngineStartButtonMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: DefaultMaterial
+  Comp: NitroButtonMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: DefaultMaterial
+
+Actor: Player_VrVehicle (Class: BP_VrVehiclePawn_C)
+  Comp: ChassisMeshComponent | StaticMesh: SM_Merkurs_Chassis | NumMats: 46
+    Mat[0]: Metal_-_Chrome
+    Mat[1]: M_TrueClearGlass
+    Mat[2]: M_SteeringWheel_Alcantara
+    Mat[3]: WorldGridMaterial
+    Mat[4]: Metal_-_Black_-_Rough_0_2
+    Mat[17]: Car_Paint_-_Red_002
+  Comp: DashboardBackplateMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: DashboardWoodTrimMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: AmbientLightStripMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_Siren_Red
+  Comp: CentralTouchscreenMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: BrakePedalMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: Metal_-_Chrome
+  Comp: ThrottlePedalMesh | StaticMesh: Cube | NumMats: 1
+    Mat[0]: Metal_-_Chrome
+  Comp: SteeringColumnMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: SteeringWheelVisualMesh | StaticMesh: SM_Steering_Wheel_Centered | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: GearShiftLeverMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: M_SteeringWheel_Alcantara
+  Comp: GearShiftKnobMesh | StaticMesh: Sphere | NumMats: 1
+    Mat[0]: Metal_-_Chrome
+  Comp: EngineStartButtonMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: DefaultMaterial
+  Comp: NitroButtonMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: DefaultMaterial
+
+Actor: Police_Pursuit_Interceptor_1 (Class: BP_PoliceVehiclePawn_C)
+  Comp: ChassisMeshComponent | StaticMesh: SM_Merkurs_Chassis | NumMats: 46
+    Mat[0]: Metal_-_Chrome
+    Mat[1]: M_TrueClearGlass
+    Mat[2]: M_SteeringWheel_Alcantara
+    Mat[3]: WorldGridMaterial
+    Mat[4]: Metal_-_Black_-_Rough_0_2
+    Mat[17]: Car_Paint_-_Black
+  Comp: RedSirenMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: M_Siren_Red
+  Comp: BlueSirenMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: M_Siren_Blue
+
+Actor: Police_Pursuit_Interceptor_2 (Class: BP_PoliceVehiclePawn_C)
+  Comp: ChassisMeshComponent | StaticMesh: SM_Merkurs_Chassis | NumMats: 46
+    Mat[0]: Metal_-_Chrome
+    Mat[1]: M_TrueClearGlass
+    Mat[2]: M_SteeringWheel_Alcantara
+    Mat[3]: WorldGridMaterial
+    Mat[4]: Metal_-_Black_-_Rough_0_2
+    Mat[17]: Car_Paint_-_Black
+  Comp: RedSirenMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: M_Siren_Red
+  Comp: BlueSirenMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: M_Siren_Blue
+
+Actor: Police_Pursuit_Interceptor_3 (Class: BP_PoliceVehiclePawn_C)
+  Comp: ChassisMeshComponent | StaticMesh: SM_Merkurs_Chassis | NumMats: 46
+    Mat[0]: Metal_-_Chrome
+    Mat[1]: M_TrueClearGlass
+    Mat[2]: M_SteeringWheel_Alcantara
+    Mat[3]: WorldGridMaterial
+    Mat[4]: Metal_-_Black_-_Rough_0_2
+    Mat[17]: Car_Paint_-_Black
+  Comp: RedSirenMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: M_Siren_Red
+  Comp: BlueSirenMesh | StaticMesh: Cylinder | NumMats: 1
+    Mat[0]: M_Siren_Blue

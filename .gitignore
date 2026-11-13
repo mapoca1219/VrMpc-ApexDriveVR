@@ -1,0 +1,36 @@
+# ====================================================================
+# Unreal Engine 5 .gitignore for VrMpc - Apex Drive VR
+# ====================================================================
+
+# Build & intermediate directories
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+Build/
+
+# IDE and Editor files
+.vscode/
+*.code-workspace
+.idea/
+.vs/
+*.VC.db
+*.opendb
+.DS_Store
+*.swp
+*.bak
+
+# Temporary dumps, logs, and caches
+*.log
+*.tmp
+*.bin
+map_actors_dump.txt
+inspect_out.txt
+__pycache__/
+*.pyc
+
+# Large raw DCC assets and unused heavy test files (>50MB)
+*.fbx
+*.obj
+*.mtl
+Content/Vehicles/mercedes-benz+AMG+GT-R.uasset

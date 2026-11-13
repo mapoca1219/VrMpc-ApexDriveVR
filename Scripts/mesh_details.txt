@@ -1,0 +1,11 @@
+=== MESH DETAILS ===
+Wheel: LODs=1, Sections(LOD0)=1, Bounds: Extent=<Struct 'Vector' (0xa1ce6a1c598) {x: 0.073732, y: 0.068995, z: 0.160993}>, Origin=<Struct 'Vector' (0xa1ce6a1c580) {x: 0.000000, y: 0.000000, z: 0.000000}>
+  Sec 0: M_SteeringWheel_Alcantara
+Chassis: LODs=1, Sections(LOD0)=46, Bounds: Extent=<Struct 'Vector' (0xa1cd337c458) {x: 250.214020, y: 120.914379, z: 61.976732}>, Origin=<Struct 'Vector' (0xa1cd337c440) {x: 0.004181, y: -0.000027, z: 61.673521}>
+  Sec 0: WorldGridMaterial
+  Sec 1: WorldGridMaterial
+  Sec 2: WorldGridMaterial
+  Sec 3: WorldGridMaterial
+  Sec 4: WorldGridMaterial
+Ioniq: LODs=1, Sections(LOD0)=1, Bounds: Extent=<Struct 'Vector' (0xa1cd337c718) {x: 8201.495605, y: 17591.603516, z: 6105.124272}>, Origin=<Struct 'Vector' (0xa1cd337c700) {x: -0.042480, y: -334.378906, z: 6094.549556}>
+  Sec 0: WorldGridMaterial

@@ -1,0 +1,214 @@
+Ref pose: <Struct 'AnimPose' (0x60bf2fd9fc0) {}>
+assign
+cast
+copy
+evaluate_animation_blueprint_with_input_pose
+export_text
+get_bone_names
+get_bone_pose
+get_curve_names
+get_curve_weight
+get_editor_property
+get_ref_bone_pose
+get_ref_pose_relative_transform
+get_relative_to_ref_pose_transform
+get_relative_transform
+get_socket_names
+get_socket_pose
+import_text
+is_valid
+set_bone_pose
+set_editor_properties
+set_editor_property
+static_struct
+to_dict
+to_tuple
+Bone names count: 188
+  Car-Rig
+  DEF-Body
+  amg_body
+  BackBumper_001
+  BackBumper_002
+  BackBumper_005
+  BackBumper_006
+  BackBumper_008
+  BackBumper_009
+  BackFender_002
+  BackGlass_001
+  BackGrill_001
+  BackNumberPlate_001
+  BackSideWindshield_001
+  Ceiling_002
+  Cube_002
+  Door_001
+  FenderGrill_001
+  FrontSideWindshield_001
+  FrontSideWindshield_003
+  FrontSignPanel_001
+  FrontWindshield_001
+  FrontWindshield_003
+  GuideMesh_003
+  GuideMesh_008
+  GuideMesh_009
+  GuideMesh_010
+  GuideMesh_011
+  GuideMesh_012
+  Hide_002
+  Hood_001
+  HoodGrills_001
+  Icosphere_002
+  Interior---Shell_001
+  PanelUnderDoor_002
+  PanelUnderDoor_003
+  Plane_001
+  Plane_005
+  Plane_006
+  Plane_007
+  Plane_008
+  RoofFrame_002
+  Sphere_001
+  Text_001
+  backlight_001
+  front-fender_001
+  handle_001
+  lights_front_006
+  lights_front_007
+  lights_front_009
+  lights_front_010
+  lights_front_011
+  lights_front_012
+  logos_001
+  logos_003
+  logos_004
+  mirror_005
+  roof_001
+  spoiler_002
+  trunk_002
+  trunk_003
+  trunk_007
+  trunk_008
+  trunk_009
+  trunk2_001
+  DEF-Body_end
+  DEF-Wheel_Ft_L
+  amg-Wheel_Ft_L
+  FT-D-L_001
+  FT-L_001
+  DEF-Wheel_Ft_L_end
+  DEF-Wheel_Ft_R
+  amg-Wheel_Ft_R
+  FT-D-R_001
+  FT-R_001
+  DEF-Wheel_Ft_R_end
+  DEF-Wheel_Bk_L
+  amg-Wheel_Bk_L
+  BK-D-L_001
+  BK-L_001
+  DEF-Wheel_Bk_L_end
+  DEF-Wheel_Bk_R
+  amg-Wheel_Bk_R
+  BK-D-R_001
+  BK-R_001
+  DEF-Wheel_Bk_R_end
+  DEF-WheelBrake_Ft_L
+  amg-WheelBrake_Ft_L
+  DEF-WheelBrake_Ft_L_end
+  DEF-WheelBrake_Ft_R
+  amg-WheelBrake_Ft_R
+  DEF-WheelBrake_Ft_R_end
+  DEF-WheelBrake_Bk_L
+  amg-WheelBrake_Bk_L
+  DEF-WheelBrake_Bk_L_end
+  DEF-WheelBrake_Bk_R
+  amg-WheelBrake_Bk_R
+  DEF-WheelBrake_Bk_R_end
+  Root
+  SHP-Root
+  SHP-Root_end
+  Drift
+  GroundSensor_Axle_Bk
+  SHP-GroundSensor_Axle_Bk
+  SHP-GroundSensor_Axle_Bk_end
+  MCH-Root_Axle_Bk
+  SHP-Drift
+  SHP-Drift_end
+  GroundSensor_Ft_L
+  SHP-GroundSensor_Ft_L
+  SHP-GroundSensor_Ft_L_end
+  MCH-Wheel_Ft_L
+  MCH-Wheel_Ft_L_end
+  MCH-WheelBrake_Ft_L
+  WheelBrake_Ft_L
+  WheelBrake_Ft_L_end
+  Wheel_Ft_L
+  Wheel_Ft_L_end
+  WheelDamper_Ft_L
+  MCH-WheelDamper_Ft_L
+  MCH-WheelDamper_Ft_L_end
+  GroundSensor_Ft_R
+  SHP-GroundSensor_Ft_R
+  SHP-GroundSensor_Ft_R_end
+  MCH-Wheel_Ft_R
+  MCH-Wheel_Ft_R_end
+  MCH-WheelBrake_Ft_R
+  MCH-WheelBrake_Ft_R_end
+  Wheel_Ft_R
+  Wheel_Ft_R_end
+  WheelDamper_Ft_R
+  MCH-WheelDamper_Ft_R
+  MCH-WheelDamper_Ft_R_end
+  GroundSensor_Bk_L
+  SHP-GroundSensor_Bk_L
+  SHP-GroundSensor_Bk_L_end
+  MCH-Wheel_Bk_L
+  MCH-Wheel_Bk_L_end
+  MCH-WheelBrake_Bk_L
+  WheelBrake_Bk_L
+  WheelBrake_Bk_L_end
+  Wheel_Bk_L
+  Wheel_Bk_L_end
+  WheelDamper_Bk_L
+  MCH-WheelDamper_Bk_L
+  MCH-WheelDamper_Bk_L_end
+  GroundSensor_Bk_R
+  SHP-GroundSensor_Bk_R
+  SHP-GroundSensor_Bk_R_end
+  MCH-Wheel_Bk_R
+  MCH-Wheel_Bk_R_end
+  MCH-WheelBrake_Bk_R
+  MCH-WheelBrake_Bk_R_end
+  Wheel_Bk_R
+  Wheel_Bk_R_end
+  WheelDamper_Bk_R
+  MCH-WheelDamper_Bk_R
+  MCH-WheelDamper_Bk_R_end
+  MCH-Axis_Ft
+  MCH-Axis_Ft_end
+  MCH-Axis_Bk
+  MCH-Axis_Bk_end
+  MCH-Suspension_Bk
+  MCH-Suspension_Bk_end
+  MCH-Suspension_Ft
+  MCH-Axis
+  MCH-Body
+  MCH-Body_end
+  Suspension
+  Suspension_end
+  GroundSensor_Axle_Ft
+  SHP-GroundSensor_Axle_Ft
+  SHP-GroundSensor_Axle_Ft_end
+  MCH-Root_Axle_Ft
+  MCH-Root_Axle_Ft_end
+  MCH-Steering
+  MCH-Steering_end
+  MCH-Wheel_rotation_Ft_L
+  MCH-Wheel_rotation_Ft_L_end
+  MCH-Wheel_rotation_Ft_R
+  MCH-Wheel_rotation_Ft_R_end
+  MCH-Wheel_rotation_Bk_L
+  MCH-Wheel_rotation_Bk_L_end
+  MCH-Wheel_rotation_Bk_R
+  MCH-Wheel_rotation_Bk_R_end
+  MCH-Steering_rotation
+  Steering
+  Steering_end

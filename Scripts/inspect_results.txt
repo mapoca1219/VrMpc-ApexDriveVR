@@ -1,0 +1,63 @@
+=== Asset: /Game/Vehicles/Meshes/SM_Steering_Wheel_Centered (StaticMesh) ===
+  Box Extent: <Struct 'Vector' (0x43cd711c858) {x: 0.073732, y: 0.068995, z: 0.160993}>, Origin: <Struct 'Vector' (0x43cd711c840) {x: 0.000000, y: 0.000000, z: 0.000000}>
+  Materials count: 1
+    Slot 0 (Common_Buttons_White_Diffuse): M_SteeringWheel_Alcantara
+=== Asset: /Game/Vehicles/Meshes/SM_Merkurs_Chassis (StaticMesh) ===
+  Box Extent: <Struct 'Vector' (0x43cd711c858) {x: 250.214020, y: 120.914379, z: 61.976732}>, Origin: <Struct 'Vector' (0x43cd711c840) {x: 0.004181, y: -0.000027, z: 61.673521}>
+  Materials count: 46
+    Slot 0 (Licence_plate_metal): WorldGridMaterial
+    Slot 1 (License_plate): WorldGridMaterial
+    Slot 2 (alcantara): WorldGridMaterial
+    Slot 3 (Vehicles_Decals_Exterior): WorldGridMaterial
+    Slot 4 (Black_001): WorldGridMaterial
+    Slot 5 (Common_Vehicle_Branding): WorldGridMaterial
+    Slot 6 (Stitches_Color_D01): WorldGridMaterial
+    Slot 7 (Stepped_Leather): WorldGridMaterial
+    Slot 8 (Specmap_Steel): WorldGridMaterial
+    Slot 9 (Common_Buttons_White): WorldGridMaterial
+    Slot 10 (Common_Stitches_D01): WorldGridMaterial
+    Slot 11 (Leather02_W): WorldGridMaterial
+    Slot 12 (Chrome): WorldGridMaterial
+    Slot 13 (PTN_Perforated_020): WorldGridMaterial
+    Slot 14 (Common_Button_Blue): WorldGridMaterial
+    Slot 15 (Brake_Light): WorldGridMaterial
+    Slot 16 (Common_Light_Details_Red): WorldGridMaterial
+    Slot 17 (Vehicle_Primary_Paint): WorldGridMaterial
+    Slot 18 (Glass): WorldGridMaterial
+    Slot 19 (Reverse_Light): WorldGridMaterial
+    Slot 20 (Rim_BL): WorldGridMaterial
+    Slot 21 (Break_Cover): WorldGridMaterial
+    Slot 22 (Break_Texture): WorldGridMaterial
+    Slot 23 (Tire_Sport_Type): WorldGridMaterial
+    Slot 24 (Rim_BL_Badge): WorldGridMaterial
+    Slot 25 (Red_2): WorldGridMaterial
+    Slot 26 (Black): WorldGridMaterial
+    Slot 27 (Vehicle_Third_Paint): WorldGridMaterial
+    Slot 28 (Light_Blue): WorldGridMaterial
+    Slot 29 (Vehicles_Stickers): WorldGridMaterial
+    Slot 30 (Grate_05): WorldGridMaterial
+    Slot 31 (Light_Details_Orange): WorldGridMaterial
+    Slot 32 (Alcantara_BL): WorldGridMaterial
+    Slot 33 (EmisWhite): WorldGridMaterial
+    Slot 34 (Headlight): WorldGridMaterial
+    Slot 35 (Material_002): WorldGridMaterial
+    Slot 36 (KCR_Screen): WorldGridMaterial
+    Slot 37 (KCR_Screen_Emis): WorldGridMaterial
+    Slot 38 (Roughness_Fine_002): WorldGridMaterial
+    Slot 39 (Carpet_004_White): WorldGridMaterial
+    Slot 40 (Seatbelt_003): WorldGridMaterial
+    Slot 41 (Vehicle_Secondary_Paint): WorldGridMaterial
+    Slot 42 (Signal_Right_Indicator): WorldGridMaterial
+    Slot 43 (Signal_Left_Indicator): WorldGridMaterial
+    Slot 44 (Exterior_Decals_White): WorldGridMaterial
+    Slot 45 (X453MA_Decal_01): WorldGridMaterial
+=== Asset: /Game/Vehicles/Meshes/SM_Hyundai_Ioniq5 (StaticMesh) ===
+  Box Extent: <Struct 'Vector' (0x43cd711d218) {x: 8201.495605, y: 17591.603516, z: 6105.124272}>, Origin: <Struct 'Vector' (0x43cd711d200) {x: -0.042480, y: -334.378906, z: 6094.549556}>
+  Materials count: 1
+    Slot 0 (Material_0): WorldGridMaterial
+=== Asset: /Game/Audio/SW_Engine_Loop (SoundWave) ===
+  SoundWave loaded successfully: SW_Engine_Loop
+=== Asset: /Game/Audio/SW_Police_Siren (SoundWave) ===
+  SoundWave loaded successfully: SW_Police_Siren
+=== Asset: /Game/Audio/SW_Copilot_Radio (SoundWave) ===
+  SoundWave loaded successfully: SW_Copilot_Radio

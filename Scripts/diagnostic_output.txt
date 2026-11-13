@@ -1,0 +1,18 @@
+=== VERIFICACION FINAL DE BLUEPRINTS ===
+Blueprint: BP_VrVehiclePawn
+   ChassisMesh: <Object '/Game/Vehicles/Meshes/SM_Merkurs_Chassis.SM_Merkurs_Chassis' (0x8299277e000) Class 'StaticMesh'>
+   Audio [RadioAudioComponent]: Sound=<Object '/Game/Audio/SW_Copilot_Radio.SW_Copilot_Radio' (0x8299dabe600) Class 'SoundWave'>
+   Audio [EngineAudioComponent]: Sound=<Object '/Game/Audio/SW_Engine_Loop.SW_Engine_Loop' (0x8299dabbe00) Class 'SoundWave'>
+Blueprint: BP_PoliceVehiclePawn
+   ChassisMesh: <Object '/Game/Vehicles/Meshes/SM_Hyundai_Ioniq5.SM_Hyundai_Ioniq5' (0x8299277a800) Class 'StaticMesh'>
+   Audio [EngineAudioComponent]: Sound=<Object '/Game/Audio/SW_Engine_Loop.SW_Engine_Loop' (0x8299dabbe00) Class 'SoundWave'>
+   Audio [SirenAudioComponent]: Sound=<Object '/Game/Audio/SW_Police_Siren.SW_Police_Siren' (0x8299dabc800) Class 'SoundWave'>
+=== VERIFICACION FINAL DE ACTORES EN NIVEL ===
+Actor en nivel: BP_VrVehiclePawn (BP_VrVehiclePawn_C)
+   Instancia ChassisMesh: <Object '/Game/Vehicles/Meshes/SM_Merkurs_Chassis.SM_Merkurs_Chassis' (0x8299277e000) Class 'StaticMesh'>
+   Instancia Audio [RadioAudioComponent]: Sound=<Object '/Game/Audio/SW_Copilot_Radio.SW_Copilot_Radio' (0x8299dabe600) Class 'SoundWave'>
+   Instancia Audio [EngineAudioComponent]: Sound=<Object '/Game/Audio/SW_Engine_Loop.SW_Engine_Loop' (0x8299dabbe00) Class 'SoundWave'>
+Actor en nivel: BP_PoliceVehiclePawn (BP_PoliceVehiclePawn_C)
+   Instancia ChassisMesh: <Object '/Game/Vehicles/Meshes/SM_Hyundai_Ioniq5.SM_Hyundai_Ioniq5' (0x8299277a800) Class 'StaticMesh'>
+   Instancia Audio [EngineAudioComponent]: Sound=<Object '/Game/Audio/SW_Engine_Loop.SW_Engine_Loop' (0x8299dabbe00) Class 'SoundWave'>
+   Instancia Audio [SirenAudioComponent]: Sound=<Object '/Game/Audio/SW_Police_Siren.SW_Police_Siren' (0x8299dabc800) Class 'SoundWave'>

@@ -1,0 +1,8 @@
+WORLD SETTINGS DEFAULT GAME MODE: None
+BP_XRGameMode CDO DefaultPawnClass: None
+TOTAL ACTORS IN LEVEL: 7
+Actor: RaceTrack_Circuit (RaceTrackSpline) at <Struct 'Vector' (0x709ff55910) {x: 0.000000, y: 0.000000, z: 50.000000}>
+Actor: BP_VrVehiclePawn (BP_VrVehiclePawn_C) at <Struct 'Vector' (0x709ff6d190) {x: 1925.253908, y: -200.417877, z: 90.000000}>
+   -> auto_possess_player: <AutoReceiveInput.PLAYER0: 1>, auto_possess_ai: <AutoPossessAI.DISABLED: 0>
+Actor: BP_PoliceVehiclePawn (BP_PoliceVehiclePawn_C) at <Struct 'Vector' (0x709ff550a0) {x: 431.551446, y: -63.111818, z: 90.000000}>
+   -> auto_possess_player: <AutoReceiveInput.DISABLED: 0>, auto_possess_ai: <AutoPossessAI.PLACED_IN_WORLD_OR_SPAWNED: 3>
