@@ -178,7 +178,7 @@ AVrVehiclePawn::AVrVehiclePawn()
 	CentralScreenTacticalCopilot->SetupAttachment(CentralDisplayAnchor);
 	CentralScreenTacticalCopilot->SetRelativeLocation(FVector(-0.5f, 0.0f, 0.5f));
 	CentralScreenTacticalCopilot->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
-	CentralScreenTacticalCopilot->SetText(FText::FromString(TEXT("AI COPILOT: ONLINE (GEMINI 2.5) | RADAR: DESPEJADO")));
+	CentralScreenTacticalCopilot->SetText(FText::FromString(TEXT("AI COPILOT: ONLINE (GEMINI 2.5) | RADAR: CLEAR")));
 	CentralScreenTacticalCopilot->SetTextRenderColor(FColor(180, 235, 255));
 	CentralScreenTacticalCopilot->SetWorldSize(1.25f);
 	CentralScreenTacticalCopilot->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
@@ -1088,26 +1088,42 @@ void AVrVehiclePawn::Tick(float DeltaTime)
 
 				if (SelfName.Contains(TEXT("Rival_01")) || SelfName.Contains(TEXT("1")))
 				{
-					// Rival 1 (Cian): Apex specialist - cuts the inside tightly on turns, runs center-left on straights
+					// Rival 1 (Cyan): Apex specialist - cuts the inside tightly on turns, runs center-left on straights
 					BaseLane = -160.0f + ApexOffset + FMath::Sin(TimeSec * 0.45f) * 35.0f;
-					AiTargetSpeedKmh = 172.0f;
+					AiTargetSpeedKmh = 212.0f;
 				}
 				else if (SelfName.Contains(TEXT("Rival_02")) || SelfName.Contains(TEXT("2")))
 				{
-					// Rival 2 (Verde): High-speed outside sweeper - enters wide, carries momentum
+					// Rival 2 (Green): High-speed outside sweeper - enters wide, carries momentum
 					BaseLane = 220.0f - (ApexOffset * 0.5f) + FMath::Cos(TimeSec * 0.38f) * 45.0f;
-					AiTargetSpeedKmh = 180.0f;
+					AiTargetSpeedKmh = 218.0f;
 				}
 				else if (SelfName.Contains(TEXT("Rival_03")) || SelfName.Contains(TEXT("3")))
 				{
-					// Rival 3 (Púrpura): Aggressive overtaker - slaloms through the center
+					// Rival 3 (Purple): Aggressive overtaker - slaloms through the center
 					BaseLane = 30.0f + (ApexOffset * 0.6f) + FMath::Sin(TimeSec * 0.65f) * 65.0f;
-					AiTargetSpeedKmh = 188.0f;
+					AiTargetSpeedKmh = 224.0f;
 				}
 				else
 				{
 					BaseLane = -60.0f + FMath::Sin(TimeSec * 0.5f) * 50.0f;
-					AiTargetSpeedKmh = 175.0f;
+					AiTargetSpeedKmh = 210.0f;
+				}
+
+				// Dynamic AI competitive rubberbanding: If player pulls ahead, rivals draft and push hard!
+				AVrVehiclePawn* PlayerPawnRef = Cast<AVrVehiclePawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+				if (PlayerPawnRef && PlayerPawnRef != this)
+				{
+					float PlayerLeadDist = PlayerPawnRef->DistanceAlongTrack - DistanceAlongTrack;
+					if (Spline->IsClosedLoop())
+					{
+						if (PlayerLeadDist < -SplineLen * 0.5f) PlayerLeadDist += SplineLen;
+						else if (PlayerLeadDist > SplineLen * 0.5f) PlayerLeadDist -= SplineLen;
+					}
+					if (PlayerLeadDist > 0.0f && PlayerLeadDist < 12000.0f)
+					{
+						AiTargetSpeedKmh += 10.0f; // Slipstream attack boost!
+					}
 				}
 
 				// AI Proactive Overtaking: look 25 meters (2500cm) ahead!
@@ -1306,7 +1322,7 @@ void AVrVehiclePawn::UpdateCockpitTelemetry(float DeltaTime)
 		return;
 	}
 
-	// 1. Race Countdown Phase (3, 2, 1, ¡GO!)
+	// 1. Race Countdown Phase (3, 2, 1, GO!)
 	if (!bIsRaceActive)
 	{
 		RaceCountdownTimer -= DeltaTime;
@@ -1318,19 +1334,19 @@ void AVrVehiclePawn::UpdateCockpitTelemetry(float DeltaTime)
 			if (RaceCountdownTimer > 3.0f) { CountMsg = TEXT("  [ 3 ]  "); CColor = FColor(255, 40, 40); }
 			else if (RaceCountdownTimer > 2.0f) { CountMsg = TEXT("  [ 2 ]  "); CColor = FColor(255, 160, 0); }
 			else if (RaceCountdownTimer > 1.0f) { CountMsg = TEXT("  [ 1 ]  "); CColor = FColor(255, 230, 0); }
-			else { CountMsg = TEXT(">>> ¡YA! ¡ACELERA A FONDO (W)! <<<"); CColor = FColor(0, 255, 128); }
+			else { CountMsg = TEXT(">>> GO! FULL THROTTLE (W)! <<<"); CColor = FColor(0, 255, 128); }
 
 			GEngine->AddOnScreenDebugMessage(100, 0.15f, CColor, CountMsg, true, FVector2D(2.6f, 2.6f));
 		}
 
 		if (GearTextRender)
 		{
-			GearTextRender->SetText(FText::FromString(TEXT("LISTO")));
+			GearTextRender->SetText(FText::FromString(TEXT("READY")));
 			GearTextRender->SetTextRenderColor(FColor(255, 180, 0));
 		}
 		if (PositionTextRender)
 		{
-			PositionTextRender->SetText(FText::FromString(TEXT("SALIDA")));
+			PositionTextRender->SetText(FText::FromString(TEXT("GRID")));
 			PositionTextRender->SetTextRenderColor(FColor(0, 245, 255));
 		}
 
@@ -1343,7 +1359,7 @@ void AVrVehiclePawn::UpdateCockpitTelemetry(float DeltaTime)
 				SpeedTextRender->SetWorldSize(6.2f);
 				if (PoliceAlertTextRender)
 				{
-					PoliceAlertTextRender->SetText(FText::FromString(TEXT("/// ENCIENDE MOTORES ///")));
+					PoliceAlertTextRender->SetText(FText::FromString(TEXT("/// START ENGINES ///")));
 					PoliceAlertTextRender->SetTextRenderColor(FColor(255, 60, 60));
 				}
 			}
@@ -1354,7 +1370,7 @@ void AVrVehiclePawn::UpdateCockpitTelemetry(float DeltaTime)
 				SpeedTextRender->SetWorldSize(6.2f);
 				if (PoliceAlertTextRender)
 				{
-					PoliceAlertTextRender->SetText(FText::FromString(TEXT("/// PREPARA EL ACELERADOR ///")));
+					PoliceAlertTextRender->SetText(FText::FromString(TEXT("/// REV ENGINES ///")));
 					PoliceAlertTextRender->SetTextRenderColor(FColor(255, 180, 0));
 				}
 			}
@@ -1365,18 +1381,18 @@ void AVrVehiclePawn::UpdateCockpitTelemetry(float DeltaTime)
 				SpeedTextRender->SetWorldSize(6.2f);
 				if (PoliceAlertTextRender)
 				{
-					PoliceAlertTextRender->SetText(FText::FromString(TEXT("/// ¡LISTO PARA SALIR! ///")));
+					PoliceAlertTextRender->SetText(FText::FromString(TEXT("/// READY TO LAUNCH ///")));
 					PoliceAlertTextRender->SetTextRenderColor(FColor(255, 230, 0));
 				}
 			}
 			else if (RaceCountdownTimer > 0.0f)
 			{
-				SpeedTextRender->SetText(FText::FromString(TEXT(" ¡YA! ")));
+				SpeedTextRender->SetText(FText::FromString(TEXT(" GO! ")));
 				SpeedTextRender->SetTextRenderColor(FColor(0, 255, 128));
 				SpeedTextRender->SetWorldSize(6.8f);
 				if (PoliceAlertTextRender)
 				{
-					PoliceAlertTextRender->SetText(FText::FromString(TEXT(">>> ¡ACELERA A FONDO (W)! <<<")));
+					PoliceAlertTextRender->SetText(FText::FromString(TEXT(">>> FULL THROTTLE (W)! GO! GO! <<<")));
 					PoliceAlertTextRender->SetTextRenderColor(FColor(0, 255, 128));
 				}
 			}
@@ -1410,14 +1426,21 @@ void AVrVehiclePawn::UpdateCockpitTelemetry(float DeltaTime)
 		FString HudStr;
 		if (bRaceFinished)
 		{
-			HudStr = FString::Printf(TEXT(">>> ¡CARRERA COMPLETADA! POSICIÓN FINAL: P%d / 7  |  [R] REINICIAR <<<"), CurrentRacePosition);
+			if (CurrentRacePosition == 1)
+			{
+				HudStr = TEXT(">>> ★ VICTORY! YOU WIN! 1ST PLACE CHAMPION! ★  |  PRESS [R] TO RESTART <<<");
+			}
+			else
+			{
+				HudStr = FString::Printf(TEXT(">>> RACE FINISHED! FINAL POSITION: P%d / 7  |  PRESS [R] TO RESTART <<<"), CurrentRacePosition);
+			}
 		}
 		else
 		{
-			HudStr = FString::Printf(TEXT("POS: P%d / 7  |  VUELTA: %d / %d  |  %d KM/H  |  MARCHA: %d  |  NITRO: %d%%  |  [C] CAMBIAR CÁMARA"),
+			HudStr = FString::Printf(TEXT("POS: P%d / 7  |  LAP: %d / %d  |  %d KM/H  |  GEAR: %d  |  NITRO: %d%%  |  [C] CHANGE CAMERA"),
 				CurrentRacePosition, CurrentLap, TotalLaps, FMath::RoundToInt(Speed), CurrentGear, FMath::RoundToInt(GetNitroPercentage()));
 		}
-		GEngine->AddOnScreenDebugMessage(101, 0.15f, bRaceFinished ? FColor(0, 255, 128) : FColor(0, 245, 255), HudStr, true, FVector2D(1.4f, 1.4f));
+		GEngine->AddOnScreenDebugMessage(101, 0.15f, bRaceFinished ? (CurrentRacePosition == 1 ? FColor(255, 215, 0) : FColor(0, 255, 128)) : FColor(0, 245, 255), HudStr, true, FVector2D(1.4f, 1.4f));
 	}
 
 	// Compute realistic automatic gear based on speed
@@ -1528,20 +1551,36 @@ void AVrVehiclePawn::UpdateRacePosition()
 	{
 		if (bRaceFinished)
 		{
-			PositionTextRender->SetText(FText::FromString(FString::Printf(TEXT("FINAL: P%d"), CurrentRacePosition)));
-			PositionTextRender->SetTextRenderColor(FColor(0, 255, 128));
+			if (CurrentRacePosition == 1)
+			{
+				PositionTextRender->SetText(FText::FromString(TEXT("WINNER! P1")));
+				PositionTextRender->SetTextRenderColor(FColor(255, 215, 0));
+			}
+			else
+			{
+				PositionTextRender->SetText(FText::FromString(FString::Printf(TEXT("FINAL: P%d"), CurrentRacePosition)));
+				PositionTextRender->SetTextRenderColor(FColor(0, 255, 128));
+			}
 		}
 		else
 		{
-			PositionTextRender->SetText(FText::FromString(FString::Printf(TEXT("P%d | VTA %d/%d"), CurrentRacePosition, CurrentLap, TotalLaps)));
+			PositionTextRender->SetText(FText::FromString(FString::Printf(TEXT("P%d | LAP %d/%d"), CurrentRacePosition, CurrentLap, TotalLaps)));
 			PositionTextRender->SetTextRenderColor(FColor(0, 245, 255));
 		}
 	}
 
 	if (bRaceFinished && PoliceAlertTextRender)
 	{
-		PoliceAlertTextRender->SetText(FText::FromString(FString::Printf(TEXT("¡BANDERA A CUADROS! LLEGASTE P%d - PULSA [R] PARA REINICIAR"), CurrentRacePosition)));
-		PoliceAlertTextRender->SetTextRenderColor(FColor(0, 255, 128));
+		if (CurrentRacePosition == 1)
+		{
+			PoliceAlertTextRender->SetText(FText::FromString(TEXT("★ VICTORY! YOU WIN! 1ST PLACE CHAMPION! ★  PRESS [R] TO RESTART")));
+			PoliceAlertTextRender->SetTextRenderColor(FColor(255, 215, 0));
+		}
+		else
+		{
+			PoliceAlertTextRender->SetText(FText::FromString(FString::Printf(TEXT("CHECKERED FLAG! FINISHED P%d - PRESS [R] TO RESTART"), CurrentRacePosition)));
+			PoliceAlertTextRender->SetTextRenderColor(FColor(0, 255, 128));
+		}
 		PoliceAlertTextRender->SetVisibility(true);
 	}
 	else if (PoliceAlertTextRender)
@@ -1549,7 +1588,7 @@ void AVrVehiclePawn::UpdateRacePosition()
 		const float PoliceDistMeters = ClosestPoliceDist / 100.0f;
 		if (PoliceDistMeters <= 40.0f)
 		{
-			PoliceAlertTextRender->SetText(FText::FromString(FString::Printf(TEXT("[!] PATRULLA: %.0fm - ¡USA NITRO!"), PoliceDistMeters)));
+			PoliceAlertTextRender->SetText(FText::FromString(FString::Printf(TEXT("[!] POLICE INTERCEPTOR: %.0fm - USE NITRO!"), PoliceDistMeters)));
 			PoliceAlertTextRender->SetTextRenderColor(FColor(255, 30, 30));
 			PoliceAlertTextRender->SetVisibility(true);
 		}
@@ -1569,22 +1608,22 @@ void AVrVehiclePawn::UpdateRacePosition()
 			{
 				if (UpcomingCurveDeg > 0.0f)
 				{
-					PoliceAlertTextRender->SetText(FText::FromString(TEXT("COPILOT: ¡CURVA DERECHA! FRENA")));
+					PoliceAlertTextRender->SetText(FText::FromString(TEXT("COPILOT: RIGHT TURN AHEAD! BRAKE")));
 				}
 				else
 				{
-					PoliceAlertTextRender->SetText(FText::FromString(TEXT("COPILOT: ¡CURVA IZQUIERDA! FRENA")));
+					PoliceAlertTextRender->SetText(FText::FromString(TEXT("COPILOT: LEFT TURN AHEAD! BRAKE")));
 				}
 				PoliceAlertTextRender->SetTextRenderColor(FColor(255, 170, 0));
 			}
 			else if (CurrentRacePosition == 1)
 			{
-				PoliceAlertTextRender->SetText(FText::FromString(TEXT("COPILOT: ¡POLE POSITION! MANTÉN RITMO")));
+				PoliceAlertTextRender->SetText(FText::FromString(TEXT("COPILOT: POLE POSITION! MAINTAIN PACE")));
 				PoliceAlertTextRender->SetTextRenderColor(FColor(255, 215, 0));
 			}
 			else
 			{
-				PoliceAlertTextRender->SetText(FText::FromString(TEXT("COPILOT: DESPEJADO - ACELERA")));
+				PoliceAlertTextRender->SetText(FText::FromString(TEXT("COPILOT: TRACK CLEAR - PUSH HARD")));
 				PoliceAlertTextRender->SetTextRenderColor(FColor(0, 255, 128));
 			}
 			PoliceAlertTextRender->SetVisibility(true);
@@ -1597,12 +1636,12 @@ void AVrVehiclePawn::UpdateRacePosition()
 		const float PoliceDistMeters = ClosestPoliceDist / 100.0f;
 		if (PoliceDistMeters <= 50.0f)
 		{
-			CentralScreenTacticalCopilot->SetText(FText::FromString(FString::Printf(TEXT("ALERTA TACTICA: PATRULLA A %.0fm (INTERCEPTOR)"), PoliceDistMeters)));
+			CentralScreenTacticalCopilot->SetText(FText::FromString(FString::Printf(TEXT("TACTICAL ALERT: POLICE AT %.0fm (INTERCEPTOR)"), PoliceDistMeters)));
 			CentralScreenTacticalCopilot->SetTextRenderColor(FColor(255, 40, 40));
 		}
 		else
 		{
-			CentralScreenTacticalCopilot->SetText(FText::FromString(FString::Printf(TEXT("AI COPILOT: SECTOR DESPEJADO | POS: P%d/7"), CurrentRacePosition)));
+			CentralScreenTacticalCopilot->SetText(FText::FromString(FString::Printf(TEXT("AI COPILOT: SECTOR CLEAR | POS: P%d/7"), CurrentRacePosition)));
 			CentralScreenTacticalCopilot->SetTextRenderColor(FColor(180, 235, 255));
 		}
 	}
@@ -1870,7 +1909,7 @@ void AVrVehiclePawn::RestartRace()
 	bIsRaceActive = false;
 	bRaceFinished = false;
 	CurrentLap = 1;
-	TotalLaps = 3;
+	TotalLaps = 5;
 	PreviousDistanceAlongTrack = 1200.0f;
 	LateralBounceVelocity = 0.0f;
 	DistanceAlongTrack = 1200.0f;
@@ -1923,7 +1962,7 @@ void AVrVehiclePawn::RestartRace()
 
 	if (PoliceAlertTextRender)
 	{
-		PoliceAlertTextRender->SetText(FText::FromString(TEXT("CARRERA REINICIADA - ¡ACELERA!")));
+		PoliceAlertTextRender->SetText(FText::FromString(TEXT("RACE RESTARTED - FULL THROTTLE!")));
 		PoliceAlertTextRender->SetTextRenderColor(FColor(0, 245, 255));
 	}
 }

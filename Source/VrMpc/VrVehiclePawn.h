@@ -355,7 +355,7 @@ protected:
 	int32 CurrentLap = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VR|Race")
-	int32 TotalLaps = 3;
+	int32 TotalLaps = 5;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR|Race")
 	bool bRaceFinished = false;

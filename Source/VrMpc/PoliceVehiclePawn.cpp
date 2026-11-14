@@ -332,7 +332,7 @@ void APoliceVehiclePawn::CheckProximityAndAlertPlayer()
 		{
 			AIAgent->SendImmediateEventAlert(
 				TEXT("POLICE_ALERT"),
-				TEXT("¡Patrulla pegada a la defensa trasera!")
+				TEXT("POLICE PATROL ON REAR BUMPER! EVADE!")
 			);
 		}
 	}
@@ -510,19 +510,19 @@ void APoliceVehiclePawn::UpdatePursuitAI(float DeltaTime)
 
 		// Tactical Pursuit Speed & Throttle:
 		const float TargetSpeed = TargetPlayerPawn->GetSpeedKmh();
-		float DesiredSpeed = 165.0f;
+		float DesiredSpeed = 190.0f;
 
 		if (DistDiff > 400.0f)
 		{
 			// 1. PURSUIT MODE (Target is ahead):
-			// Aggressively chase racer, match speed + 25-35 km/h, up to 215 km/h!
+			// Aggressively chase racer, match speed + 25-35 km/h, up to 230 km/h!
 			if (DistDiff <= 1800.0f)
 			{
-				DesiredSpeed = FMath::Clamp(TargetSpeed + 32.0f, 150.0f, 215.0f);
+				DesiredSpeed = FMath::Clamp(TargetSpeed + 35.0f, 180.0f, 230.0f);
 			}
 			else
 			{
-				DesiredSpeed = FMath::Clamp(TargetSpeed + 22.0f, 150.0f, 205.0f);
+				DesiredSpeed = FMath::Clamp(TargetSpeed + 25.0f, 175.0f, 220.0f);
 			}
 			Throttle = 1.0f;
 			Brake = 0.0f;
@@ -531,30 +531,30 @@ void APoliceVehiclePawn::UpdatePursuitAI(float DeltaTime)
 		{
 			// 2. RAMMING / SIDESWIPE MODE (Alongside target):
 			// Match speed and bump hard into the side of the car
-			DesiredSpeed = TargetSpeed + 10.0f;
+			DesiredSpeed = FMath::Max(TargetSpeed + 8.0f, 195.0f);
 			Throttle = 1.0f;
 			Brake = 0.0f;
 		}
-		else if (DistDiff < -400.0f && DistDiff >= -2500.0f)
+		else if (DistDiff < -400.0f && DistDiff >= -3500.0f)
 		{
 			// 3. ACTIVE LANE BLOCKING (Target is behind police, attempting to pass):
-			// Cut them off! Tap brakes to physically contest the lane and make passing difficult!
-			DesiredSpeed = FMath::Max(75.0f, TargetSpeed * 0.94f);
-			Throttle = 0.35f;
-			Brake = 0.40f;
+			// Actively match high speed (98% of player) and weave directly in front of their lane!
+			DesiredSpeed = FMath::Clamp(TargetSpeed * 0.98f, 185.0f, 225.0f);
+			Throttle = 1.0f;
+			Brake = 0.0f;
 		}
 		else
 		{
-			// 4. Target is far behind (> 25m): Cruise forward
-			DesiredSpeed = 160.0f;
-			Throttle = 0.85f;
+			// 4. Target is far behind (> 35m): Cruise forward at patrol pace
+			DesiredSpeed = 180.0f;
+			Throttle = 0.90f;
 			Brake = 0.0f;
 		}
 	}
 	else if (SplineFollower && SplineFollower->HasValidSpline())
 	{
 		SplineFollower->ComputeSteeringAndThrottle(CurrentSpeed, Steer, Throttle, Brake);
-		Throttle = FMath::Max(Throttle, 0.90f);
+		Throttle = FMath::Max(Throttle, 0.95f);
 	}
 	else
 	{
@@ -577,7 +577,7 @@ void APoliceVehiclePawn::UpdatePursuitAI(float DeltaTime)
 
 		if (Throttle > 0.01f)
 		{
-			FallbackPoliceSpeedKmh = FMath::Min(FallbackPoliceSpeedKmh + 95.0f * DeltaTime * Throttle, 215.0f);
+			FallbackPoliceSpeedKmh = FMath::Min(FallbackPoliceSpeedKmh + 110.0f * DeltaTime * Throttle, 225.0f);
 		}
 		else if (Brake > 0.01f)
 		{
@@ -585,7 +585,7 @@ void APoliceVehiclePawn::UpdatePursuitAI(float DeltaTime)
 		}
 		else
 		{
-			FallbackPoliceSpeedKmh = FMath::FInterpTo(FallbackPoliceSpeedKmh, 150.0f, DeltaTime, 1.5f);
+			FallbackPoliceSpeedKmh = FMath::FInterpTo(FallbackPoliceSpeedKmh, 180.0f, DeltaTime, 1.5f);
 		}
 
 		// 1. Advance along track circuit
@@ -597,7 +597,7 @@ void APoliceVehiclePawn::UpdatePursuitAI(float DeltaTime)
 			DistanceAlongTrack += SplineLen;
 		}
 
-		// 2. Lateral offset: Dynamic Combat Tactics (Block, Ram, or Chase)
+		// 2. Lateral offset: Aggressive Combat Lane-Weaving & Road-Blocking
 		float DesiredLateral = 0.0f;
 		if (TargetPlayerPawn.IsValid())
 		{
@@ -608,29 +608,30 @@ void APoliceVehiclePawn::UpdatePursuitAI(float DeltaTime)
 				else if (TargetDist > SplineLen * 0.5f) TargetDist -= SplineLen;
 			}
 
-			if (TargetDist < -2500.0f)
+			if (TargetDist < -3500.0f)
 			{
 				DesiredLateral = 0.0f; // Target far behind, stay center
 			}
-			else if (TargetDist < -400.0f)
+			else if (TargetDist < -300.0f)
 			{
-				// BLOCKING: Cut off the racer trying to overtake! Mirror their lane!
+				// AGGRESSIVE BLOCKING: Mirror player's lane with high authority so player cannot pass without swerving!
 				DesiredLateral = FMath::Clamp(TargetPlayerPawn->GetLateralTrackOffset(), -320.0f, 320.0f);
 			}
-			else if (FMath::Abs(TargetDist) <= 400.0f)
+			else if (FMath::Abs(TargetDist) <= 300.0f)
 			{
-				// RAMMING: Steer INTO the racer!
+				// SIDESWIPE / RAMMING: Steer violently into the player!
 				const float LatDiff = TargetPlayerPawn->GetLateralTrackOffset() - LateralTrackOffset;
 				const float RamSign = (LatDiff >= 0.0f) ? 1.0f : -1.0f;
-				DesiredLateral = FMath::Clamp(TargetPlayerPawn->GetLateralTrackOffset() + (RamSign * 80.0f), -340.0f, 340.0f);
+				DesiredLateral = FMath::Clamp(TargetPlayerPawn->GetLateralTrackOffset() + (RamSign * 60.0f), -340.0f, 340.0f);
 			}
 			else
 			{
-				// PURSUIT: Align behind target to draft and ram them
+				// PURSUIT: Close in directly behind target
 				DesiredLateral = FMath::Clamp(TargetPlayerPawn->GetLateralTrackOffset(), -320.0f, 320.0f);
 			}
 		}
-		LateralTrackOffset = FMath::FInterpTo(LateralTrackOffset, DesiredLateral, DeltaTime, 3.5f);
+		// High-responsiveness (8.0f) makes police snap directly in front of the player's front bumper!
+		LateralTrackOffset = FMath::FInterpTo(LateralTrackOffset, DesiredLateral, DeltaTime, 8.0f);
 
 		// 3. Keep firmly on asphalt surface (0.0cm ride height) with nose pointed forward
 		const FVector SplinePos = Spline->GetLocationAtDistanceAlongSpline(DistanceAlongTrack, ESplineCoordinateSpace::World);

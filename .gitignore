@@ -34,3 +34,5 @@ __pycache__/
 *.obj
 *.mtl
 Content/Vehicles/mercedes-benz+AMG+GT-R.uasset
+*.mov
+*.mp4
