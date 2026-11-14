@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """
-Apex Drive VR: Cockpit Pursuit - Master Competition Video Producer
+Apex Drive VR: Cockpit Pursuit - Master Competition Video Producer (with Music Soundtrack)
 Meta VR Start Developer Competition 2026 Edition
 
 Produces the definitive winning hackathon showcase video:
-- 1080p 60fps cinematic widescreen master
+- 1080p 60fps cinematic widescreen master (156.5 seconds)
 - Professional English narrator voiceover synchronized with race events
-- Intro card & Outro submission card with Meta Release Channel & GitHub repo
+- 128 BPM Cyberpunk Synthwave electronic racing soundtrack
+- Rebalanced original gameplay engine audio + tire skids
+- Intro card & Outro submission card with Meta Release Channel URL & GitHub repo
 - Dynamic technical lower-third banners explaining all 6 core technical pillars
-- Rebalanced original gameplay engine audio mixed with studio narration
 """
 
 import os
@@ -22,12 +23,14 @@ if not os.path.exists(FFMPEG):
 
 INPUT_VIDEO = "VrMpc.mov"
 NARRATION_AUDIO = "scratch/narration_full_timeline.wav"
+MUSIC_AUDIO = "scratch/synthwave_racing_soundtrack.wav"
 OUTPUT_VIDEO = "ApexDriveVR_Winning_Trailer.mp4"
 
 print("==================================================================")
-print(">>> PRODUCING APEX DRIVE VR MASTER COMPETITION VIDEO")
+print(">>> PRODUCING APEX DRIVE VR MASTER COMPETITION VIDEO WITH MUSIC")
 print(f">>> Input Video:     {INPUT_VIDEO}")
 print(f">>> Narration Audio: {NARRATION_AUDIO}")
+print(f">>> Music Audio:     {MUSIC_AUDIO}")
 print(f">>> Output Master:   {OUTPUT_VIDEO}")
 print("==================================================================")
 
@@ -97,10 +100,14 @@ filter_complex = (
     "drawtext=text='THANK YOU JUDGES & META EVALUATION TEAM!':fontcolor=0xFFD54F:fontsize=30:x=(w-text_w)/2:y=760:enable='gte(t,146.5)'"
     "[v_out];"
     
-    # Audio pipeline: mix game audio with narrator audio
-    "[0:a]volume=0.75[a_game];"
-    "[1:a]volume=1.45[a_narrator];"
-    "[a_game][a_narrator]amix=inputs=2:duration=first:dropout_transition=2[a_out]"
+    # 3-Track Master Audio Mixing:
+    # 0: Game Audio (Engine, Tires, Sirens) @ 55%
+    # 1: Narrator Voice @ 150%
+    # 2: 128 BPM Synthwave Music @ 68%
+    "[0:a]volume=0.55[a_game];"
+    "[1:a]volume=1.50[a_narrator];"
+    "[2:a]volume=0.68[a_music];"
+    "[a_game][a_narrator][a_music]amix=inputs=3:duration=first:dropout_transition=2[a_out]"
 )
 
 cmd = [
@@ -108,6 +115,7 @@ cmd = [
     "-y",
     "-i", INPUT_VIDEO,
     "-i", NARRATION_AUDIO,
+    "-i", MUSIC_AUDIO,
     "-filter_complex", filter_complex,
     "-map", "[v_out]",
     "-map", "[a_out]",
@@ -120,7 +128,7 @@ cmd = [
     OUTPUT_VIDEO
 ]
 
-print(">>> Launching FFmpeg render process...")
+print(">>> Launching FFmpeg render process with 3-track audio mix...")
 t_start = time.time()
 res = subprocess.run(cmd, capture_output=True, text=True)
 t_elapsed = time.time() - t_start

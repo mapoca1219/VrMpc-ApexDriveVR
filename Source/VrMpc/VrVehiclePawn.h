@@ -301,6 +301,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR|Cockpit")
 	TObjectPtr<UAudioComponent> EngineAudioComponent;
 
+	/** In-Game Electronic Cyberpunk Soundtrack component (Stereo Surround 2D) */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR|Audio")
+	TObjectPtr<UAudioComponent> MusicAudioComponent;
+
+	/** Toggles in-game background music on/off (Key M) */
+	UFUNCTION(BlueprintCallable, Category = "VR|Audio")
+	void ToggleMusic();
+
 	/** Tactical Copilot AI Agent component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR|AI")
 	TObjectPtr<UCarAIAgentComponent> AIAgentComponent;

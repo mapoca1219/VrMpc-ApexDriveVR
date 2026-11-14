@@ -455,6 +455,20 @@ AVrVehiclePawn::AVrVehiclePawn()
 		EngineAudioComponent->bAllowSpatialization = true;
 	}
 
+	// In-Game Cyberpunk Racing Soundtrack (Head-Locked 2D Stereo Surround)
+	MusicAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("MusicAudioComponent"));
+	MusicAudioComponent->SetupAttachment(CockpitRoot);
+	MusicAudioComponent->bAutoActivate = true;
+	MusicAudioComponent->bIsUISound = true;
+	MusicAudioComponent->bAllowSpatialization = false; // Pure stereo surrounding the driver
+	MusicAudioComponent->SetVolumeMultiplier(0.35f);
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> MusicFinder(TEXT("/Game/Audio/SW_Synthwave_Music.SW_Synthwave_Music"));
+	if (MusicFinder.Succeeded())
+	{
+		MusicAudioComponent->SetSound(MusicFinder.Object);
+	}
+
 	// Tactical AI Copilot Agent
 	AIAgentComponent = CreateDefaultSubobject<UCarAIAgentComponent>(TEXT("AIAgentComponent"));
 	AIAgentComponent->BackendEndpointUrl = TEXT("http://127.0.0.1:8000/api/v1/copilot/tactics");
@@ -545,6 +559,20 @@ void AVrVehiclePawn::BeginPlay()
 		{
 			EngineAudioComponent->Play();
 		}
+	}
+
+	// In-Game Music: Local player only (non-spatialized head-locked stereo)
+	if (!bIsAiRacer && MusicAudioComponent && MusicAudioComponent->Sound)
+	{
+		MusicAudioComponent->SetVolumeMultiplier(0.35f);
+		if (!MusicAudioComponent->IsPlaying())
+		{
+			MusicAudioComponent->Play();
+		}
+	}
+	else if (bIsAiRacer && MusicAudioComponent)
+	{
+		MusicAudioComponent->Stop();
 	}
 
 	if (bIsAiRacer)
@@ -903,6 +931,12 @@ void AVrVehiclePawn::Tick(float DeltaTime)
 		                   PC->WasInputKeyJustPressed(EKeys::SpaceBar))))
 		{
 			RestartRace();
+		}
+
+		// Key M toggles in-game background music on/off
+		if (PC->WasInputKeyJustPressed(EKeys::M))
+		{
+			ToggleMusic();
 		}
 
 		if (PC->IsInputKeyDown(EKeys::E))
@@ -1787,6 +1821,9 @@ void AVrVehiclePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	// Press 'R' on keyboard or touch screen to restart race
 	PlayerInputComponent->BindKey(EKeys::R, IE_Pressed, this, &AVrVehiclePawn::RestartRace);
+
+	// Press 'M' on keyboard to toggle background music
+	PlayerInputComponent->BindKey(EKeys::M, IE_Pressed, this, &AVrVehiclePawn::ToggleMusic);
 }
 
 void AVrVehiclePawn::OnKeyThrottle(float Val)
@@ -2052,6 +2089,34 @@ void AVrVehiclePawn::RestartRace()
 	{
 		PoliceAlertTextRender->SetText(FText::FromString(TEXT("RACE RESTARTED - FULL THROTTLE!")));
 		PoliceAlertTextRender->SetTextRenderColor(FColor(0, 245, 255));
+	}
+
+	// Ensure background music is playing for local player
+	if (!bIsAiRacer && MusicAudioComponent && !MusicAudioComponent->IsPlaying())
+	{
+		MusicAudioComponent->Play();
+	}
+}
+
+void AVrVehiclePawn::ToggleMusic()
+{
+	if (!MusicAudioComponent) return;
+
+	if (MusicAudioComponent->IsPlaying())
+	{
+		MusicAudioComponent->Stop();
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(88, 2.5f, FColor(255, 128, 0), TEXT(">>> MUSIC: [MUTED] (M) <<<"), true, FVector2D(1.3f, 1.3f));
+		}
+	}
+	else
+	{
+		MusicAudioComponent->Play();
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(88, 2.5f, FColor(0, 255, 128), TEXT(">>> MUSIC: [PLAYING] (M) <<<"), true, FVector2D(1.3f, 1.3f));
+		}
 	}
 }
 
