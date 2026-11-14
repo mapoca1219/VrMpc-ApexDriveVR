@@ -18,6 +18,7 @@
 APoliceVehiclePawn::APoliceVehiclePawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bIsParkedAmbush = false;
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = AAIController::StaticClass();
@@ -199,6 +200,10 @@ void APoliceVehiclePawn::BeginPlay()
 	}
 
 	// Initialize track progress and lateral offset from initial spawn location
+	bIsParkedAmbush = false;
+	FallbackPoliceSpeedKmh = 195.0f;
+	SetSirenActive(true);
+
 	if (TrackActor.IsValid() && TrackActor->GetSplineComponent())
 	{
 		USplineComponent* SplineComp = TrackActor->GetSplineComponent();
@@ -419,6 +424,7 @@ void APoliceVehiclePawn::UpdatePursuitAI(float DeltaTime)
 	float Steer = 0.0f;
 	float Throttle = 1.0f;
 	float Brake = 0.0f;
+	float DesiredSpeed = 200.0f;
 
 	// Parked Ambush State: wait motionless on shoulder with sirens off until any racer approaches
 	if (bIsParkedAmbush)
@@ -510,7 +516,7 @@ void APoliceVehiclePawn::UpdatePursuitAI(float DeltaTime)
 
 		// Tactical Pursuit Speed & Throttle:
 		const float TargetSpeed = TargetPlayerPawn->GetSpeedKmh();
-		float DesiredSpeed = 190.0f;
+		DesiredSpeed = 190.0f;
 
 		if (DistDiff > 400.0f)
 		{
@@ -575,9 +581,17 @@ void APoliceVehiclePawn::UpdatePursuitAI(float DeltaTime)
 	{
 		const float SplineLen = Spline->GetSplineLength();
 
+		const float TargetSpeedCap = FMath::Max(DesiredSpeed, 235.0f);
 		if (Throttle > 0.01f)
 		{
-			FallbackPoliceSpeedKmh = FMath::Min(FallbackPoliceSpeedKmh + 110.0f * DeltaTime * Throttle, 225.0f);
+			if (FallbackPoliceSpeedKmh < DesiredSpeed)
+			{
+				FallbackPoliceSpeedKmh = FMath::Min(FallbackPoliceSpeedKmh + 140.0f * DeltaTime * Throttle, TargetSpeedCap);
+			}
+			else
+			{
+				FallbackPoliceSpeedKmh = FMath::FInterpTo(FallbackPoliceSpeedKmh, DesiredSpeed, DeltaTime, 1.8f);
+			}
 		}
 		else if (Brake > 0.01f)
 		{
@@ -585,7 +599,7 @@ void APoliceVehiclePawn::UpdatePursuitAI(float DeltaTime)
 		}
 		else
 		{
-			FallbackPoliceSpeedKmh = FMath::FInterpTo(FallbackPoliceSpeedKmh, 180.0f, DeltaTime, 1.5f);
+			FallbackPoliceSpeedKmh = FMath::FInterpTo(FallbackPoliceSpeedKmh, 195.0f, DeltaTime, 1.5f);
 		}
 
 		// 1. Advance along track circuit

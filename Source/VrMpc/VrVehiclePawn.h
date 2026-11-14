@@ -255,6 +255,16 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR|Cockpit")
 	TObjectPtr<UStaticMeshComponent> NitroButtonMesh;
 
+	/** Dual Rocket Exhaust Nitro Thruster Visual Effects */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR|Vehicle")
+	TObjectPtr<UStaticMeshComponent> LeftNitroFlameMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR|Vehicle")
+	TObjectPtr<UStaticMeshComponent> RightNitroFlameMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR|Vehicle")
+	TObjectPtr<class UPointLightComponent> NitroFlameLight;
+
 	/** Whether the vehicle engine is currently running */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VR|Vehicle")
 	bool bIsEngineStarted = true;
@@ -388,6 +398,7 @@ private:
 	float NitroAmount = 100.0f;
 	float CurrentRawThrottle = 0.0f;
 	float CurrentSteeringInput = 0.0f;
+	float AxisSteerInput = 0.0f;
 	float FallbackSpeedKmh = 0.0f;
 	float TelemetryUpdateTimer = 0.0f;
 

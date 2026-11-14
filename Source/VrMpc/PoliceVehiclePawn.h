@@ -52,7 +52,7 @@ public:
 
 	/** Whether this interceptor starts parked on the shoulder waiting to ambush the player */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Police|Ambush")
-	bool bIsParkedAmbush = true;
+	bool bIsParkedAmbush = false;
 
 	/** Distance threshold to spring the ambush when player speeds past (cm) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Police|Ambush")

@@ -9,6 +9,7 @@
 #include "Components/WidgetComponent.h"
 #include "Components/AudioComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "Components/PointLightComponent.h"
 #include "ChaosWheeledVehicleMovementComponent.h"
 #include "CarAIAgentComponent.h"
 #include "RaceTrackSpline.h"
@@ -329,6 +330,58 @@ AVrVehiclePawn::AVrVehiclePawn()
 		NitroButtonMesh->SetStaticMesh(CylinderFinder.Object);
 	}
 
+	// Dual Rocket Exhaust Nitro Thruster Visual Effects (Visible at rear of car)
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> ConeFinder(TEXT("/Engine/BasicShapes/Cone.Cone"));
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> CyanFlameMatFinder(TEXT("/Game/Vehicles/Materials/M_Siren_Blue.M_Siren_Blue"));
+
+	LeftNitroFlameMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftNitroFlameMesh"));
+	LeftNitroFlameMesh->SetupAttachment(RootComponent);
+	LeftNitroFlameMesh->SetRelativeLocation(FVector(-245.0f, -38.0f, 24.0f));
+	LeftNitroFlameMesh->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
+	LeftNitroFlameMesh->SetRelativeScale3D(FVector(0.12f, 0.12f, 0.38f));
+	LeftNitroFlameMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	LeftNitroFlameMesh->SetVisibility(false);
+	if (ConeFinder.Succeeded())
+	{
+		LeftNitroFlameMesh->SetStaticMesh(ConeFinder.Object);
+	}
+	else if (CylinderFinder.Succeeded())
+	{
+		LeftNitroFlameMesh->SetStaticMesh(CylinderFinder.Object);
+	}
+	if (CyanFlameMatFinder.Succeeded())
+	{
+		LeftNitroFlameMesh->SetMaterial(0, CyanFlameMatFinder.Object);
+	}
+
+	RightNitroFlameMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightNitroFlameMesh"));
+	RightNitroFlameMesh->SetupAttachment(RootComponent);
+	RightNitroFlameMesh->SetRelativeLocation(FVector(-245.0f, 38.0f, 24.0f));
+	RightNitroFlameMesh->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
+	RightNitroFlameMesh->SetRelativeScale3D(FVector(0.12f, 0.12f, 0.38f));
+	RightNitroFlameMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	RightNitroFlameMesh->SetVisibility(false);
+	if (ConeFinder.Succeeded())
+	{
+		RightNitroFlameMesh->SetStaticMesh(ConeFinder.Object);
+	}
+	else if (CylinderFinder.Succeeded())
+	{
+		RightNitroFlameMesh->SetStaticMesh(CylinderFinder.Object);
+	}
+	if (CyanFlameMatFinder.Succeeded())
+	{
+		RightNitroFlameMesh->SetMaterial(0, CyanFlameMatFinder.Object);
+	}
+
+	NitroFlameLight = CreateDefaultSubobject<UPointLightComponent>(TEXT("NitroFlameLight"));
+	NitroFlameLight->SetupAttachment(RootComponent);
+	NitroFlameLight->SetRelativeLocation(FVector(-245.0f, 0.0f, 25.0f));
+	NitroFlameLight->SetLightColor(FLinearColor(0.1f, 0.85f, 1.0f));
+	NitroFlameLight->Intensity = 8000.0f;
+	NitroFlameLight->AttenuationRadius = 600.0f;
+	NitroFlameLight->SetVisibility(false);
+
 	// In-Cockpit 3D Digital Speedometer (Mounted on Dashboard Cluster facing driver, elevated above wheel)
 	SpeedTextRender = CreateDefaultSubobject<UTextRenderComponent>(TEXT("SpeedTextRender"));
 	SpeedTextRender->SetupAttachment(CockpitRoot);
@@ -364,7 +417,7 @@ AVrVehiclePawn::AVrVehiclePawn()
 	PoliceAlertTextRender->SetupAttachment(CockpitRoot);
 	PoliceAlertTextRender->SetRelativeLocation(FVector(35.5f, 0.0f, 4.2f));
 	PoliceAlertTextRender->SetRelativeRotation(FRotator(-16.0f, 180.0f, 0.0f));
-	PoliceAlertTextRender->SetText(FText::FromString(TEXT("PATRULLA: DESPEJADO")));
+	PoliceAlertTextRender->SetText(FText::FromString(TEXT("PATROL STATUS: CLEAR")));
 	PoliceAlertTextRender->SetTextRenderColor(FColor(0, 255, 128));
 	PoliceAlertTextRender->SetWorldSize(1.6f);
 	PoliceAlertTextRender->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
@@ -720,7 +773,7 @@ void AVrVehiclePawn::CycleCameraMode()
 		if (ChaseCamera) ChaseCamera->SetActive(true);
 		if (VRCamera) VRCamera->SetActive(false);
 		if (HoodCamera) HoodCamera->SetActive(false);
-		if (GEngine) GEngine->AddOnScreenDebugMessage(99, 2.5f, FColor(0, 245, 255), TEXT(">>> CÁMARA: EXTERIOR 3A PERSONA (ARCADE) [C] <<<"), true, FVector2D(1.4f, 1.4f));
+		if (GEngine) GEngine->AddOnScreenDebugMessage(99, 2.5f, FColor(0, 245, 255), TEXT(">>> CAMERA: CHASE CAM (ARCADE) [C] <<<"), true, FVector2D(1.4f, 1.4f));
 	}
 	else if (ActiveCameraMode == 1)
 	{
@@ -728,7 +781,7 @@ void AVrVehiclePawn::CycleCameraMode()
 		if (ChaseCamera) ChaseCamera->SetActive(false);
 		if (VRCamera) VRCamera->SetActive(true);
 		if (HoodCamera) HoodCamera->SetActive(false);
-		if (GEngine) GEngine->AddOnScreenDebugMessage(99, 2.5f, FColor(255, 215, 0), TEXT(">>> CÁMARA: INTERIOR CABINA (COCKPIT) [C] <<<"), true, FVector2D(1.4f, 1.4f));
+		if (GEngine) GEngine->AddOnScreenDebugMessage(99, 2.5f, FColor(255, 215, 0), TEXT(">>> CAMERA: COCKPIT VIEW [C] <<<"), true, FVector2D(1.4f, 1.4f));
 	}
 	else
 	{
@@ -736,7 +789,7 @@ void AVrVehiclePawn::CycleCameraMode()
 		if (ChaseCamera) ChaseCamera->SetActive(false);
 		if (VRCamera) VRCamera->SetActive(false);
 		if (HoodCamera) HoodCamera->SetActive(true);
-		if (GEngine) GEngine->AddOnScreenDebugMessage(99, 2.5f, FColor(0, 255, 128), TEXT(">>> CÁMARA: CAPÓ FRONTAL (HOOD CAM) [C] <<<"), true, FVector2D(1.4f, 1.4f));
+		if (GEngine) GEngine->AddOnScreenDebugMessage(99, 2.5f, FColor(0, 255, 128), TEXT(">>> CAMERA: HOOD CAM [C] <<<"), true, FVector2D(1.4f, 1.4f));
 	}
 }
 
@@ -778,12 +831,30 @@ void AVrVehiclePawn::Tick(float DeltaTime)
 		NitroAmount = FMath::Min(100.0f, NitroAmount + NitroRechargeRate * DeltaTime);
 	}
 
+	// Update visual nitro exhaust flames & light
+	if (LeftNitroFlameMesh && RightNitroFlameMesh)
+	{
+		LeftNitroFlameMesh->SetVisibility(bIsNitroActive);
+		RightNitroFlameMesh->SetVisibility(bIsNitroActive);
+		if (NitroFlameLight)
+		{
+			NitroFlameLight->SetVisibility(bIsNitroActive);
+		}
+		if (bIsNitroActive)
+		{
+			const float FlamePulse = FMath::FRandRange(0.85f, 1.25f);
+			LeftNitroFlameMesh->SetRelativeScale3D(FVector(0.12f, 0.12f, 0.38f * FlamePulse));
+			RightNitroFlameMesh->SetRelativeScale3D(FVector(0.12f, 0.12f, 0.38f * FlamePulse));
+		}
+	}
+
 	// Audio modulation - Deep supercar rumble, smooth & pleasant (never screeching or tiring)
 	if (EngineAudioComponent)
 	{
-		const float Pitch = FMath::Clamp(0.68f + (GetSpeedKmh() / 240.0f) * 0.45f, 0.65f, 1.20f);
+		const float Pitch = FMath::Clamp(0.62f + (GetSpeedKmh() / 280.0f) * 0.38f, 0.60f, 1.02f);
 		EngineAudioComponent->SetPitchMultiplier(Pitch);
-		EngineAudioComponent->SetVolumeMultiplier(bIsAiRacer ? 0.08f : 0.28f);
+		const float Volume = bIsAiRacer ? 0.07f : (bIsNitroActive ? 0.22f : 0.20f);
+		EngineAudioComponent->SetVolumeMultiplier(Volume);
 	}
 
 	// Desktop PIE Keyboard Controls (W/S/A/D / Arrows / Space / N)
@@ -862,9 +933,16 @@ void AVrVehiclePawn::Tick(float DeltaTime)
 			SetBrake(0.0f);
 		}
 
-		if (FMath::Abs(SteerInput) > 0.01f)
+		// Comprehensive Steering Blend (Keyboard + Controller Thumbstick + Motion Hands)
+		float EffectiveSteer = SteerInput;
+		if (FMath::Abs(AxisSteerInput) > 0.04f)
 		{
-			CurrentSteeringInput = FMath::FInterpTo(CurrentSteeringInput, SteerInput, DeltaTime, 28.0f);
+			EffectiveSteer = AxisSteerInput;
+		}
+
+		if (FMath::Abs(EffectiveSteer) > 0.01f)
+		{
+			CurrentSteeringInput = FMath::FInterpTo(CurrentSteeringInput, EffectiveSteer, DeltaTime, 28.0f);
 		}
 		else if (!SteeringWheelComponent || (!SteeringWheelComponent->IsHandGrabbing(EVrHandSide::Left) && !SteeringWheelComponent->IsHandGrabbing(EVrHandSide::Right)))
 		{
@@ -988,7 +1066,16 @@ void AVrVehiclePawn::Tick(float DeltaTime)
 		}
 		else if (EffectiveThrottle > 0.01f)
 		{
-			FallbackSpeedKmh = FMath::Min(FallbackSpeedKmh + 95.0f * DeltaTime * EffectiveThrottle, 220.0f);
+			const float MaxSpeed = bIsNitroActive ? 280.0f : 220.0f;
+			const float AccelRate = bIsNitroActive ? 180.0f : 95.0f;
+			if (FallbackSpeedKmh > MaxSpeed)
+			{
+				FallbackSpeedKmh = FMath::FInterpTo(FallbackSpeedKmh, MaxSpeed, DeltaTime, 2.5f);
+			}
+			else
+			{
+				FallbackSpeedKmh = FMath::Min(FallbackSpeedKmh + AccelRate * DeltaTime * EffectiveThrottle, MaxSpeed);
+			}
 		}
 		else
 		{
@@ -1090,24 +1177,24 @@ void AVrVehiclePawn::Tick(float DeltaTime)
 				{
 					// Rival 1 (Cyan): Apex specialist - cuts the inside tightly on turns, runs center-left on straights
 					BaseLane = -160.0f + ApexOffset + FMath::Sin(TimeSec * 0.45f) * 35.0f;
-					AiTargetSpeedKmh = 212.0f;
+					AiTargetSpeedKmh = 228.0f;
 				}
 				else if (SelfName.Contains(TEXT("Rival_02")) || SelfName.Contains(TEXT("2")))
 				{
 					// Rival 2 (Green): High-speed outside sweeper - enters wide, carries momentum
 					BaseLane = 220.0f - (ApexOffset * 0.5f) + FMath::Cos(TimeSec * 0.38f) * 45.0f;
-					AiTargetSpeedKmh = 218.0f;
+					AiTargetSpeedKmh = 236.0f;
 				}
 				else if (SelfName.Contains(TEXT("Rival_03")) || SelfName.Contains(TEXT("3")))
 				{
 					// Rival 3 (Purple): Aggressive overtaker - slaloms through the center
 					BaseLane = 30.0f + (ApexOffset * 0.6f) + FMath::Sin(TimeSec * 0.65f) * 65.0f;
-					AiTargetSpeedKmh = 224.0f;
+					AiTargetSpeedKmh = 245.0f;
 				}
 				else
 				{
 					BaseLane = -60.0f + FMath::Sin(TimeSec * 0.5f) * 50.0f;
-					AiTargetSpeedKmh = 210.0f;
+					AiTargetSpeedKmh = 225.0f;
 				}
 
 				// Dynamic AI competitive rubberbanding: If player pulls ahead, rivals draft and push hard!
@@ -1122,7 +1209,7 @@ void AVrVehiclePawn::Tick(float DeltaTime)
 					}
 					if (PlayerLeadDist > 0.0f && PlayerLeadDist < 12000.0f)
 					{
-						AiTargetSpeedKmh += 10.0f; // Slipstream attack boost!
+						AiTargetSpeedKmh += 25.0f; // Aggressive slipstream pursuit boost!
 					}
 				}
 
@@ -1160,10 +1247,10 @@ void AVrVehiclePawn::Tick(float DeltaTime)
 			else
 			{
 				// 3. ULTRA-RESPONSIVE PLAYER STEERING (100% Free Driver Authority, Direct & Unhindered):
-				// BaseSteeringSpeed at 1500 cm/s (15 meters per second lateral speed!)
-				const float BaseSteeringSpeed = 1500.0f;
+				// BaseSteeringSpeed at 2400 cm/s (24 meters per second lateral speed!)
+				const float BaseSteeringSpeed = 2400.0f;
 				// Full authority at ANY speed (even when stopped or slow!)
-				const float SpeedFactor = FMath::Clamp(FallbackSpeedKmh / 50.0f, 0.90f, 1.15f);
+				const float SpeedFactor = FMath::Clamp(FallbackSpeedKmh / 40.0f, 0.90f, 1.30f);
 				const float PlayerSteeringDisplacement = CurrentSteeringInput * BaseSteeringSpeed * SpeedFactor * DeltaTime;
 
 				// Direct 1:1 steering input: no artificial centrifugal drift locking or fighting the wheel!
@@ -1225,7 +1312,7 @@ void AVrVehiclePawn::Tick(float DeltaTime)
 
 							if (PoliceAlertTextRender)
 							{
-								PoliceAlertTextRender->SetText(FText::FromString(TEXT("¡CONTACTO CON RIVAL! - ADELANTA POR EL EXTERIOR")));
+								PoliceAlertTextRender->SetText(FText::FromString(TEXT("RIVAL CONTACT! - OVERTAKE ON OUTSIDE")));
 								PoliceAlertTextRender->SetTextRenderColor(FColor(0, 245, 255));
 							}
 						}
@@ -1266,7 +1353,7 @@ void AVrVehiclePawn::Tick(float DeltaTime)
 
 							if (PoliceAlertTextRender)
 							{
-								PoliceAlertTextRender->SetText(FText::FromString(TEXT("[!] ¡PATRULLA AL LADO! - ACTIVA NITRO (SPACE)")));
+								PoliceAlertTextRender->SetText(FText::FromString(TEXT("[!] POLICE ALONGSIDE! - ENGAGE NITRO")));
 								PoliceAlertTextRender->SetTextRenderColor(FColor(255, 170, 0));
 							}
 						}
@@ -1289,10 +1376,10 @@ void AVrVehiclePawn::Tick(float DeltaTime)
 
 			// Dynamic Heading & Body Roll:
 			const FRotator SplineRot = SplineDir.Rotation();
-			// AI cars follow spline smoothly; player gets natural realistic turn angle (7.5 deg max) and body lean (-3.0 deg)
-			const float DynamicYaw = bIsAiRacer ? SplineRot.Yaw : (SplineRot.Yaw + (CurrentSteeringInput * 7.5f));
+			// AI cars follow spline smoothly; player gets natural realistic turn angle (18 deg max) and body lean (-6.5 deg)
+			const float DynamicYaw = bIsAiRacer ? SplineRot.Yaw : (SplineRot.Yaw + (CurrentSteeringInput * 18.0f));
 			const float DynamicPitch = SplineRot.Pitch;
-			const float DynamicRoll = bIsAiRacer ? 0.0f : (CurrentSteeringInput * -3.0f);
+			const float DynamicRoll = bIsAiRacer ? 0.0f : (CurrentSteeringInput * -6.5f);
 			FRotator TargetRotation(DynamicPitch, DynamicYaw, DynamicRoll);
 
 			if (TrackActor.IsValid())
@@ -1470,7 +1557,7 @@ void AVrVehiclePawn::UpdateCockpitTelemetry(float DeltaTime)
 	if (CentralScreenBatteryNitro)
 	{
 		const int32 NitroPct = FMath::Clamp(FMath::RoundToInt(NitroAmount), 0, 100);
-		const FString BoostState = bIsNitroActive ? TEXT(">>> BOOST ACTIVO <<<") : (NitroPct > 25 ? TEXT("[ READY ]") : TEXT("[ RECARGANDO ]"));
+		const FString BoostState = bIsNitroActive ? TEXT(">>> BOOST ACTIVE <<<") : (NitroPct > 25 ? TEXT("[ READY ]") : TEXT("[ RECHARGING ]"));
 		CentralScreenBatteryNitro->SetText(FText::FromString(FString::Printf(TEXT("EV BATTERY: %d%%  ||  NITRO: %s"), NitroPct, *BoostState)));
 		if (bIsNitroActive)
 		{
@@ -1744,6 +1831,7 @@ void AVrVehiclePawn::OnKeySteerRight(float Val)
 
 void AVrVehiclePawn::OnSteeringAngleUpdated(float NormalizedSteering)
 {
+	AxisSteerInput = NormalizedSteering;
 	CurrentSteeringInput = NormalizedSteering;
 	if (ChaosMovementComp)
 	{
