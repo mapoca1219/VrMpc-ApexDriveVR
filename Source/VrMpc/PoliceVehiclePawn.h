@@ -90,6 +90,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	/** Visual Static Mesh for the Police Vehicle Chassis */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Police|Mesh")
@@ -132,6 +133,9 @@ private:
 
 	UPROPERTY()
 	TWeakObjectPtr<class ARaceTrackSpline> TrackActor;
+
+	UPROPERTY(Transient)
+	TArray<TWeakObjectPtr<APoliceVehiclePawn>> OtherPoliceInterceptors;
 
 	bool bIsSirenActive = true;
 	float StrobeTimer = 0.0f;

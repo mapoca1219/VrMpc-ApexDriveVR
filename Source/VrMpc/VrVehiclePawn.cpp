@@ -446,7 +446,7 @@ AVrVehiclePawn::AVrVehiclePawn()
 	// Vehicle Engine Sound component
 	EngineAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("EngineAudioComponent"));
 	EngineAudioComponent->SetupAttachment(CockpitRoot);
-	EngineAudioComponent->bAutoActivate = true;
+	EngineAudioComponent->bAutoActivate = false;
 
 	static ConstructorHelpers::FObjectFinder<USoundWave> EngineSoundFinder(TEXT("/Game/Audio/SW_Engine_Loop.SW_Engine_Loop"));
 	if (EngineSoundFinder.Succeeded())
@@ -458,8 +458,8 @@ AVrVehiclePawn::AVrVehiclePawn()
 	// In-Game Cyberpunk Racing Soundtrack (Head-Locked 2D Stereo Surround)
 	MusicAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("MusicAudioComponent"));
 	MusicAudioComponent->SetupAttachment(CockpitRoot);
-	MusicAudioComponent->bAutoActivate = true;
-	MusicAudioComponent->bIsUISound = true;
+	MusicAudioComponent->bAutoActivate = false; // NEVER auto-activate in editor!
+	MusicAudioComponent->bIsUISound = false;     // Game audio only, never play in editor Slate UI!
 	MusicAudioComponent->bAllowSpatialization = false; // Pure stereo surrounding the driver
 	MusicAudioComponent->SetVolumeMultiplier(0.35f);
 
@@ -552,7 +552,10 @@ void AVrVehiclePawn::BeginPlay()
 		AIAgentComponent->OnTacticalAdviceReceived.AddDynamic(this, &AVrVehiclePawn::HandleTacticalAdvice);
 	}
 
-	if (EngineAudioComponent && EngineAudioComponent->Sound)
+	UWorld* CurrWorld = GetWorld();
+	const bool bIsRealGameWorld = CurrWorld && (CurrWorld->IsGameWorld() || CurrWorld->IsPlayInEditor());
+
+	if (EngineAudioComponent && EngineAudioComponent->Sound && bIsRealGameWorld)
 	{
 		EngineAudioComponent->SetVolumeMultiplier(bIsAiRacer ? 0.08f : 0.28f);
 		if (!EngineAudioComponent->IsPlaying())
@@ -560,9 +563,14 @@ void AVrVehiclePawn::BeginPlay()
 			EngineAudioComponent->Play();
 		}
 	}
+	else if (EngineAudioComponent)
+	{
+		EngineAudioComponent->Stop();
+	}
 
 	// In-Game Music: Local player only (non-spatialized head-locked stereo)
-	if (!bIsAiRacer && MusicAudioComponent && MusicAudioComponent->Sound)
+	// ONLY play during active gameplay in PIE or standalone, NEVER in editor preview!
+	if (!bIsAiRacer && MusicAudioComponent && MusicAudioComponent->Sound && bIsRealGameWorld)
 	{
 		MusicAudioComponent->SetVolumeMultiplier(0.35f);
 		if (!MusicAudioComponent->IsPlaying())
@@ -570,7 +578,7 @@ void AVrVehiclePawn::BeginPlay()
 			MusicAudioComponent->Play();
 		}
 	}
-	else if (bIsAiRacer && MusicAudioComponent)
+	else if (MusicAudioComponent)
 	{
 		MusicAudioComponent->Stop();
 	}
@@ -819,6 +827,19 @@ void AVrVehiclePawn::CycleCameraMode()
 		if (HoodCamera) HoodCamera->SetActive(true);
 		if (GEngine) GEngine->AddOnScreenDebugMessage(99, 2.5f, FColor(0, 255, 128), TEXT(">>> CAMERA: HOOD CAM [C] <<<"), true, FVector2D(1.4f, 1.4f));
 	}
+}
+
+void AVrVehiclePawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (MusicAudioComponent)
+	{
+		MusicAudioComponent->Stop();
+	}
+	if (EngineAudioComponent)
+	{
+		EngineAudioComponent->Stop();
+	}
+	Super::EndPlay(EndPlayReason);
 }
 
 void AVrVehiclePawn::Tick(float DeltaTime)
@@ -2099,8 +2120,10 @@ void AVrVehiclePawn::RestartRace()
 		PoliceAlertTextRender->SetTextRenderColor(FColor(0, 245, 255));
 	}
 
-	// Ensure background music is playing for local player
-	if (!bIsAiRacer && MusicAudioComponent && !MusicAudioComponent->IsPlaying())
+	// Ensure background music is playing for local player during active race
+	UWorld* CurrWorld = GetWorld();
+	const bool bIsRealGameWorld = CurrWorld && (CurrWorld->IsGameWorld() || CurrWorld->IsPlayInEditor());
+	if (!bIsAiRacer && MusicAudioComponent && !MusicAudioComponent->IsPlaying() && bIsRealGameWorld)
 	{
 		MusicAudioComponent->Play();
 	}

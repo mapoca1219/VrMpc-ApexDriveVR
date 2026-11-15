@@ -26,6 +26,9 @@ Build/
 *.bin
 map_actors_dump.txt
 inspect_out.txt
+inspect_vehicles_out.txt
+scratch/
+.ignore
 __pycache__/
 *.pyc
 

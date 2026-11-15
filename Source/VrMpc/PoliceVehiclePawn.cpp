@@ -94,7 +94,7 @@ APoliceVehiclePawn::APoliceVehiclePawn()
 	// Engine Sound Component
 	EngineAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("EngineAudioComponent"));
 	EngineAudioComponent->SetupAttachment(RootComponent);
-	EngineAudioComponent->bAutoActivate = true;
+	EngineAudioComponent->bAutoActivate = false;
 
 	static ConstructorHelpers::FObjectFinder<USoundWave> EngineSoundFinder(TEXT("/Game/Audio/SW_Engine_Loop.SW_Engine_Loop"));
 	if (EngineSoundFinder.Succeeded())
@@ -182,7 +182,10 @@ void APoliceVehiclePawn::BeginPlay()
 		}
 	}
 
-	if (EngineAudioComponent && EngineAudioComponent->Sound)
+	UWorld* CurrWorld = GetWorld();
+	const bool bIsRealGameWorld = CurrWorld && (CurrWorld->IsGameWorld() || CurrWorld->IsPlayInEditor());
+
+	if (EngineAudioComponent && EngineAudioComponent->Sound && bIsRealGameWorld)
 	{
 		EngineAudioComponent->SetVolumeMultiplier(0.10f);
 		if (!EngineAudioComponent->IsPlaying())
@@ -190,12 +193,35 @@ void APoliceVehiclePawn::BeginPlay()
 			EngineAudioComponent->Play();
 		}
 	}
-	if (SirenAudioComponent && SirenAudioComponent->Sound)
+	else if (EngineAudioComponent)
+	{
+		EngineAudioComponent->Stop();
+	}
+
+	if (SirenAudioComponent && SirenAudioComponent->Sound && bIsRealGameWorld)
 	{
 		SirenAudioComponent->SetVolumeMultiplier(0.022f);
 		if (bIsSirenActive && !SirenAudioComponent->IsPlaying())
 		{
 			SirenAudioComponent->Play();
+		}
+	}
+	else if (SirenAudioComponent)
+	{
+		SirenAudioComponent->Stop();
+	}
+
+	// Cache other police pawns once at start (safe, avoids running TActorIterator every frame in Tick)
+	OtherPoliceInterceptors.Empty();
+	if (CurrWorld)
+	{
+		for (TActorIterator<APoliceVehiclePawn> It(CurrWorld); It; ++It)
+		{
+			APoliceVehiclePawn* OtherPawn = *It;
+			if (OtherPawn && OtherPawn != this)
+			{
+				OtherPoliceInterceptors.Add(OtherPawn);
+			}
 		}
 	}
 
@@ -214,6 +240,19 @@ void APoliceVehiclePawn::BeginPlay()
 		const FVector RightVec = SplineComp->GetRightVectorAtSplineInputKey(MyKey, ESplineCoordinateSpace::World);
 		LateralTrackOffset = FVector::DotProduct(MyLoc - Center, RightVec);
 	}
+}
+
+void APoliceVehiclePawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (SirenAudioComponent)
+	{
+		SirenAudioComponent->Stop();
+	}
+	if (EngineAudioComponent)
+	{
+		EngineAudioComponent->Stop();
+	}
+	Super::EndPlay(EndPlayReason);
 }
 
 void APoliceVehiclePawn::Tick(float DeltaTime)
@@ -667,9 +706,9 @@ void APoliceVehiclePawn::UpdatePursuitAI(float DeltaTime)
 			}
 
 			// POLICE-TO-POLICE MUTUAL SEPARATION (Guarantees zero merging, clipping or clustering!)
-			for (TActorIterator<APoliceVehiclePawn> OtherIt(GetWorld()); OtherIt; ++OtherIt)
+			for (const TWeakObjectPtr<APoliceVehiclePawn>& OtherPolicePtr : OtherPoliceInterceptors)
 			{
-				APoliceVehiclePawn* OtherPolice = *OtherIt;
+				APoliceVehiclePawn* OtherPolice = OtherPolicePtr.Get();
 				if (OtherPolice && OtherPolice != this)
 				{
 					float OtherDistDiff = OtherPolice->DistanceAlongTrack - DistanceAlongTrack;

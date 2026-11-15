@@ -166,6 +166,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	/** Visual Static Mesh for the Vehicle Chassis / Exterior Body */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR|Vehicle")
