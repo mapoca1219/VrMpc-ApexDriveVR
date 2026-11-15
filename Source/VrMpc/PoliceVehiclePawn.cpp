@@ -192,7 +192,7 @@ void APoliceVehiclePawn::BeginPlay()
 	}
 	if (SirenAudioComponent && SirenAudioComponent->Sound)
 	{
-		SirenAudioComponent->SetVolumeMultiplier(0.12f);
+		SirenAudioComponent->SetVolumeMultiplier(0.022f);
 		if (bIsSirenActive && !SirenAudioComponent->IsPlaying())
 		{
 			SirenAudioComponent->Play();
@@ -256,7 +256,7 @@ void APoliceVehiclePawn::SetSirenActive(bool bActive)
 		if (SirenAudioComponent)
 		{
 			// Comfortable, non-fatiguing, gentle volume
-			SirenAudioComponent->SetVolumeMultiplier(0.12f);
+			SirenAudioComponent->SetVolumeMultiplier(0.022f);
 			if (!SirenAudioComponent->IsPlaying())
 			{
 				SirenAudioComponent->Play();
@@ -405,19 +405,28 @@ void APoliceVehiclePawn::UpdatePursuitAI(float DeltaTime)
 		TargetPlayerPawn = LocalPlayer;
 	}
 
-	// Mute siren if far from local player (>40m) so it never hurts ears
+	// Mute siren if far from local player (>28m) so it never hurts ears
 	APawn* LocalPlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	if (LocalPlayerPawn && SirenAudioComponent)
 	{
 		const float DistToPlayer = FVector::Dist(PoliceLoc, LocalPlayerPawn->GetActorLocation());
-		if (DistToPlayer > 4000.0f && SirenAudioComponent->IsPlaying())
+		if (DistToPlayer > 2800.0f)
 		{
-			SirenAudioComponent->Stop();
+			if (SirenAudioComponent->IsPlaying())
+			{
+				SirenAudioComponent->Stop();
+			}
 		}
-		else if (DistToPlayer <= 4000.0f && bIsSirenActive && !SirenAudioComponent->IsPlaying())
+		else if (bIsSirenActive)
 		{
-			SirenAudioComponent->SetVolumeMultiplier(0.12f);
-			SirenAudioComponent->Play();
+			// Dynamic distance-attenuated gentle siren (Max 0.022f, falls off smoothly to 0 at 28m)
+			const float DistFactor = FMath::Clamp(1.0f - (DistToPlayer / 2800.0f), 0.0f, 1.0f);
+			const float SafeSirenVolume = 0.022f * (DistFactor * DistFactor);
+			SirenAudioComponent->SetVolumeMultiplier(SafeSirenVolume);
+			if (!SirenAudioComponent->IsPlaying() && SafeSirenVolume > 0.001f)
+			{
+				SirenAudioComponent->Play();
+			}
 		}
 	}
 
@@ -520,15 +529,15 @@ void APoliceVehiclePawn::UpdatePursuitAI(float DeltaTime)
 
 		if (DistDiff > 400.0f)
 		{
-			// 1. PURSUIT MODE (Target is ahead):
-			// Aggressively chase racer, match speed + 25-35 km/h, up to 230 km/h!
+			// 1. PURSUIT MODE (Player has overtaken police and is ahead):
+			// Aggressively chase racer from behind, matching speed up to 222 km/h!
 			if (DistDiff <= 1800.0f)
 			{
-				DesiredSpeed = FMath::Clamp(TargetSpeed + 35.0f, 180.0f, 230.0f);
+				DesiredSpeed = FMath::Clamp(TargetSpeed + 18.0f, 185.0f, 222.0f);
 			}
 			else
 			{
-				DesiredSpeed = FMath::Clamp(TargetSpeed + 25.0f, 175.0f, 220.0f);
+				DesiredSpeed = FMath::Clamp(TargetSpeed + 12.0f, 180.0f, 215.0f);
 			}
 			Throttle = 1.0f;
 			Brake = 0.0f;
@@ -536,24 +545,24 @@ void APoliceVehiclePawn::UpdatePursuitAI(float DeltaTime)
 		else if (FMath::Abs(DistDiff) <= 400.0f)
 		{
 			// 2. RAMMING / SIDESWIPE MODE (Alongside target):
-			// Match speed and bump hard into the side of the car
-			DesiredSpeed = FMath::Max(TargetSpeed + 8.0f, 195.0f);
+			// Contest position aggressively
+			DesiredSpeed = FMath::Clamp(TargetSpeed + 4.0f, 180.0f, 212.0f);
 			Throttle = 1.0f;
 			Brake = 0.0f;
 		}
 		else if (DistDiff < -400.0f && DistDiff >= -3500.0f)
 		{
-			// 3. ACTIVE LANE BLOCKING (Target is behind police, attempting to pass):
-			// Actively match high speed (98% of player) and weave directly in front of their lane!
-			DesiredSpeed = FMath::Clamp(TargetSpeed * 0.98f, 185.0f, 225.0f);
-			Throttle = 1.0f;
+			// 3. OVERTAKE ZONE (Player is behind police, closing in to pass):
+			// Hold steady intercept patrol speed at 178 km/h so the player (at 220-280 km/h) can thrillingly blow past!
+			DesiredSpeed = 178.0f;
+			Throttle = 0.92f;
 			Brake = 0.0f;
 		}
 		else
 		{
 			// 4. Target is far behind (> 35m): Cruise forward at patrol pace
-			DesiredSpeed = 180.0f;
-			Throttle = 0.90f;
+			DesiredSpeed = 170.0f;
+			Throttle = 0.85f;
 			Brake = 0.0f;
 		}
 	}
@@ -628,24 +637,73 @@ void APoliceVehiclePawn::UpdatePursuitAI(float DeltaTime)
 			}
 			else if (TargetDist < -300.0f)
 			{
-				// AGGRESSIVE BLOCKING: Mirror player's lane with high authority so player cannot pass without swerving!
-				DesiredLateral = FMath::Clamp(TargetPlayerPawn->GetLateralTrackOffset(), -320.0f, 320.0f);
+				// LANE BLOCKING: Challenge player's line, but with a natural lane preference per interceptor
+				// Using vehicle pointer hash so multiple police cars don't choose the same lane
+				const bool bLeftInterceptor = (GetTypeHash(this) % 2 == 0);
+				const float PlayerLateral = TargetPlayerPawn->GetLateralTrackOffset();
+
+				if (bLeftInterceptor)
+				{
+					// Blocks left-to-center quadrant [-260, -40]
+					DesiredLateral = FMath::Clamp(PlayerLateral, -260.0f, -40.0f);
+				}
+				else
+				{
+					// Blocks right-to-center quadrant [40, 260]
+					DesiredLateral = FMath::Clamp(PlayerLateral, 40.0f, 260.0f);
+				}
 			}
 			else if (FMath::Abs(TargetDist) <= 300.0f)
 			{
-				// SIDESWIPE / RAMMING: Steer violently into the player!
+				// SIDESWIPE / RAMMING: Steer into player when alongside
 				const float LatDiff = TargetPlayerPawn->GetLateralTrackOffset() - LateralTrackOffset;
 				const float RamSign = (LatDiff >= 0.0f) ? 1.0f : -1.0f;
-				DesiredLateral = FMath::Clamp(TargetPlayerPawn->GetLateralTrackOffset() + (RamSign * 60.0f), -340.0f, 340.0f);
+				DesiredLateral = FMath::Clamp(TargetPlayerPawn->GetLateralTrackOffset() + (RamSign * 50.0f), -320.0f, 320.0f);
 			}
 			else
 			{
 				// PURSUIT: Close in directly behind target
-				DesiredLateral = FMath::Clamp(TargetPlayerPawn->GetLateralTrackOffset(), -320.0f, 320.0f);
+				DesiredLateral = FMath::Clamp(TargetPlayerPawn->GetLateralTrackOffset(), -300.0f, 300.0f);
+			}
+
+			// POLICE-TO-POLICE MUTUAL SEPARATION (Guarantees zero merging, clipping or clustering!)
+			for (TActorIterator<APoliceVehiclePawn> OtherIt(GetWorld()); OtherIt; ++OtherIt)
+			{
+				APoliceVehiclePawn* OtherPolice = *OtherIt;
+				if (OtherPolice && OtherPolice != this)
+				{
+					float OtherDistDiff = OtherPolice->DistanceAlongTrack - DistanceAlongTrack;
+					if (Spline->IsClosedLoop())
+					{
+						if (OtherDistDiff < -SplineLen * 0.5f) OtherDistDiff += SplineLen;
+						else if (OtherDistDiff > SplineLen * 0.5f) OtherDistDiff -= SplineLen;
+					}
+
+					// If two police cars are within 25 meters of each other along the track:
+					if (FMath::Abs(OtherDistDiff) < 2500.0f)
+					{
+						const float LatSeparation = LateralTrackOffset - OtherPolice->LateralTrackOffset;
+						const float MinSafeBuffer = 280.0f; // 2.8 meters minimum lateral buffer
+
+						if (FMath::Abs(LatSeparation) < MinSafeBuffer)
+						{
+							const float RepelDir = (LatSeparation >= 0.0f) ? 1.0f : -1.0f;
+							const float RepelForce = (MinSafeBuffer - FMath::Abs(LatSeparation)) * 0.70f;
+							DesiredLateral += RepelDir * RepelForce;
+						}
+
+						// If driving too close longitudinally, stagger speeds so they don't ride abreast
+						if (OtherDistDiff > 0.0f && OtherDistDiff < 700.0f)
+						{
+							FallbackPoliceSpeedKmh = FMath::Max(140.0f, FallbackPoliceSpeedKmh - 20.0f * DeltaTime * 4.0f);
+						}
+					}
+				}
 			}
 		}
-		// High-responsiveness (8.0f) makes police snap directly in front of the player's front bumper!
-		LateralTrackOffset = FMath::FInterpTo(LateralTrackOffset, DesiredLateral, DeltaTime, 8.0f);
+		DesiredLateral = FMath::Clamp(DesiredLateral, -380.0f, 380.0f);
+		// Human-like response (1.8f) allows player to outmaneuver police by feinting or using Nitro!
+		LateralTrackOffset = FMath::FInterpTo(LateralTrackOffset, DesiredLateral, DeltaTime, 1.8f);
 
 		// 3. Keep firmly on asphalt surface (0.0cm ride height) with nose pointed forward
 		const FVector SplinePos = Spline->GetLocationAtDistanceAlongSpline(DistanceAlongTrack, ESplineCoordinateSpace::World);

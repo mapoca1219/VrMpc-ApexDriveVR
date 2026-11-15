@@ -1182,16 +1182,6 @@ void AVrVehiclePawn::Tick(float DeltaTime)
 					}
 				}
 
-				if (!bIsRaceActive)
-				{
-					FallbackSpeedKmh = 0.0f;
-				}
-				else
-				{
-					// AI smoothly accelerates up to cruising speed
-					FallbackSpeedKmh = FMath::FInterpTo(FallbackSpeedKmh, AiTargetSpeedKmh, DeltaTime, 1.4f);
-				}
-
 				// DYNAMIC HUMAN-LIKE RACING LINES FOR AI RIVALS (Organic, Individual, Non-conforming)
 				float BaseLane = 0.0f;
 				const FString SelfName = GetName();
@@ -1209,29 +1199,29 @@ void AVrVehiclePawn::Tick(float DeltaTime)
 
 				if (SelfName.Contains(TEXT("Rival_01")) || SelfName.Contains(TEXT("1")))
 				{
-					// Rival 1 (Cyan): Apex specialist - cuts the inside tightly on turns, runs center-left on straights
+					// Rival 1 (Cyan): Apex champion & Grand Prix Leader - 238 km/h!
 					BaseLane = -160.0f + ApexOffset + FMath::Sin(TimeSec * 0.45f) * 35.0f;
-					AiTargetSpeedKmh = 228.0f;
+					AiTargetSpeedKmh = 238.0f;
 				}
 				else if (SelfName.Contains(TEXT("Rival_02")) || SelfName.Contains(TEXT("2")))
 				{
-					// Rival 2 (Green): High-speed outside sweeper - enters wide, carries momentum
+					// Rival 2 (Green): High-speed outside sweeper - 228 km/h!
 					BaseLane = 220.0f - (ApexOffset * 0.5f) + FMath::Cos(TimeSec * 0.38f) * 45.0f;
-					AiTargetSpeedKmh = 236.0f;
+					AiTargetSpeedKmh = 228.0f;
 				}
 				else if (SelfName.Contains(TEXT("Rival_03")) || SelfName.Contains(TEXT("3")))
 				{
-					// Rival 3 (Purple): Aggressive overtaker - slaloms through the center
+					// Rival 3 (Purple): Aggressive overtaker - 220 km/h!
 					BaseLane = 30.0f + (ApexOffset * 0.6f) + FMath::Sin(TimeSec * 0.65f) * 65.0f;
-					AiTargetSpeedKmh = 245.0f;
+					AiTargetSpeedKmh = 220.0f;
 				}
 				else
 				{
 					BaseLane = -60.0f + FMath::Sin(TimeSec * 0.5f) * 50.0f;
-					AiTargetSpeedKmh = 225.0f;
+					AiTargetSpeedKmh = 216.0f;
 				}
 
-				// Dynamic AI competitive rubberbanding: If player pulls ahead, rivals draft and push hard!
+				// Dynamic AI competitive behaviors:
 				AVrVehiclePawn* PlayerPawnRef = Cast<AVrVehiclePawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 				if (PlayerPawnRef && PlayerPawnRef != this)
 				{
@@ -1241,10 +1231,27 @@ void AVrVehiclePawn::Tick(float DeltaTime)
 						if (PlayerLeadDist < -SplineLen * 0.5f) PlayerLeadDist += SplineLen;
 						else if (PlayerLeadDist > SplineLen * 0.5f) PlayerLeadDist -= SplineLen;
 					}
-					if (PlayerLeadDist > 0.0f && PlayerLeadDist < 12000.0f)
+
+					// 1. DEFENSIVE OVERBOOST: Player is closing in from behind (-35m to 0m)
+					if (PlayerLeadDist >= -3500.0f && PlayerLeadDist < 0.0f)
 					{
-						AiTargetSpeedKmh += 25.0f; // Aggressive slipstream pursuit boost!
+						AiTargetSpeedKmh += 18.0f; // Rivals fight for position! Player needs Nitro to overtake!
 					}
+					// 2. SLIPSTREAM PURSUIT: Player has passed ahead (0m to 100m)
+					else if (PlayerLeadDist >= 0.0f && PlayerLeadDist < 10000.0f)
+					{
+						AiTargetSpeedKmh += 24.0f; // Aggressive slipstream pursuit boost!
+					}
+				}
+
+				if (!bIsRaceActive)
+				{
+					FallbackSpeedKmh = 0.0f;
+				}
+				else
+				{
+					// High-torque launch & snappy acceleration (3.2f)
+					FallbackSpeedKmh = FMath::FInterpTo(FallbackSpeedKmh, AiTargetSpeedKmh, DeltaTime, 3.2f);
 				}
 
 				// AI Proactive Overtaking: look 25 meters (2500cm) ahead!
@@ -2046,10 +2053,11 @@ void AVrVehiclePawn::RestartRace()
 	bIsBusted = false;
 	BustedTimer = 0.0f;
 
-	// Reset Rivals to starting grid
+	// Reset Rivals to starting grid with competitive launch spacing & speeds
 	int32 RivalIdx = 0;
-	const float RivalDists[5] = { 4000.0f, 3400.0f, 2900.0f, 2300.0f, 1800.0f };
+	const float RivalDists[5] = { 4600.0f, 3500.0f, 2500.0f, 1900.0f, 1500.0f };
 	const float RivalOffsets[5] = { 160.0f, -160.0f, 160.0f, -160.0f, 160.0f };
+	const float RivalSpeeds[5] = { 210.0f, 200.0f, 190.0f, 180.0f, 170.0f };
 	for (TActorIterator<AVrVehiclePawn> It(GetWorld()); It; ++It)
 	{
 		AVrVehiclePawn* Pawn = *It;
@@ -2062,7 +2070,7 @@ void AVrVehiclePawn::RestartRace()
 			{
 				Pawn->DistanceAlongTrack = RivalDists[RivalIdx];
 				Pawn->LateralTrackOffset = RivalOffsets[RivalIdx];
-				Pawn->FallbackSpeedKmh = 130.0f + (RivalIdx * 10.0f);
+				Pawn->FallbackSpeedKmh = RivalSpeeds[RivalIdx];
 				RivalIdx++;
 			}
 		}
