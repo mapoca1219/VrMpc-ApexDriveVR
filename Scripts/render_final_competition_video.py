@@ -21,7 +21,7 @@ FFMPEG = "/opt/homebrew/bin/ffmpeg"
 if not os.path.exists(FFMPEG):
     FFMPEG = "ffmpeg"
 
-INPUT_VIDEO = "VrMpc.mov"
+INPUT_VIDEO = "VrMpcfinal.mov"
 NARRATION_AUDIO = "scratch/narration_full_timeline.wav"
 MUSIC_AUDIO = "scratch/synthwave_racing_soundtrack.wav"
 OUTPUT_VIDEO = "ApexDriveVR_Winning_Trailer.mp4"
@@ -36,21 +36,21 @@ print("==================================================================")
 
 # Construct complex filtergraph
 filter_complex = (
-    # Video pipeline: trim at 146.5s (end of race), freeze winning frame for 10s outro
-    "[0:v]trim=start=0:end=146.5,setpts=PTS-STARTPTS,"
+    # Video pipeline: trim at 148.0s (end of race with Victory banner), freeze winning frame for 10s outro
+    "[0:v]trim=start=0:end=148.0,setpts=PTS-STARTPTS,"
     "scale=1920:886,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:black,fps=60,"
     "tpad=stop_mode=clone:stop_duration=10.0,"
     
-    # Persistent Top Header Bar (6.5s to 146.5s)
-    "drawbox=y=0:color=black@0.92:width=iw:height=96:t=fill:enable='between(t,6.5,146.5)',"
-    "drawtext=text='APEX DRIVE VR \\: COCKPIT PURSUIT':fontcolor=0x40C4FF:fontsize=30:x=60:y=34:enable='between(t,6.5,146.5)',"
-    "drawtext=text='META VR START DEVELOPER COMPETITION 2026':fontcolor=0xFFD54F:fontsize=22:x=w-text_w-60:y=38:enable='between(t,6.5,146.5)',"
+    # Persistent Top Header Bar (6.5s to 148.0s)
+    "drawbox=y=0:color=black@0.92:width=iw:height=96:t=fill:enable='between(t,6.5,148.0)',"
+    "drawtext=text='APEX DRIVE VR \\: COCKPIT PURSUIT':fontcolor=0x40C4FF:fontsize=30:x=60:y=34:enable='between(t,6.5,148.0)',"
+    "drawtext=text='META VR START DEVELOPER COMPETITION 2026':fontcolor=0xFFD54F:fontsize=22:x=w-text_w-60:y=38:enable='between(t,6.5,148.0)',"
     
-    # Persistent Bottom Background Bar (6.5s to 146.5s)
-    "drawbox=y=h-96:color=black@0.92:width=iw:height=96:t=fill:enable='between(t,6.5,146.5)',"
+    # Persistent Bottom Background Bar (6.5s to 148.0s)
+    "drawbox=y=h-96:color=black@0.92:width=iw:height=96:t=fill:enable='between(t,6.5,148.0)',"
     
     # 1. Intro Card (0.5s - 6.5s)
-    "drawbox=x=0:y=0:w=iw:h=ih:color=black@0.82:t=fill:enable='between(t,0.5,6.5)',"
+    "drawbox=x=0:y=0:w=iw:h=ih:color=black@0.85:t=fill:enable='between(t,0.5,6.5)',"
     "drawbox=x=160:y=180:w=iw-320:h=ih-360:color=0x00E5FF@0.7:t=2:enable='between(t,0.5,6.5)',"
     "drawtext=text='APEX DRIVE VR \\: COCKPIT PURSUIT':fontcolor=0x00E5FF:fontsize=56:x=(w-text_w)/2:y=260:enable='between(t,0.5,6.5)',"
     "drawtext=text='HIGH-SPEED COMBAT RACING  •  HANDS-FIRST VR PRESENCE':fontcolor=white:fontsize=26:x=(w-text_w)/2:y=345:enable='between(t,0.5,6.5)',"
@@ -75,38 +75,38 @@ filter_complex = (
     "drawtext=text='04 // HIGH-SPEED COMBAT POLICE INTERCEPTORS':fontcolor=0xFF5252:fontsize=28:x=60:y=h-78:enable='between(t,73.0,105.0)',"
     "drawtext=text='Tactical lane-blocking defense, PIT collision maneuvers, and 3D spatial emergency sirens':fontcolor=white:fontsize=20:x=60:y=h-42:enable='between(t,73.0,105.0)',"
     
-    # 6. Lower-Third 5: 5-Lap Championship Circuit (106.0s - 135.0s)
-    "drawtext=text='05 // 5-LAP URBAN CHAMPIONSHIP CIRCUIT & METROPOLIS':fontcolor=0x00E5FF:fontsize=28:x=60:y=h-78:enable='between(t,106.0,135.0)',"
-    "drawtext=text='Procedural multi-tier architecture, windowed towers, and asphalt tire adhesion':fontcolor=white:fontsize=20:x=60:y=h-42:enable='between(t,106.0,135.0)',"
+    # 6. Lower-Third 5: 5-Lap Championship Circuit (106.0s - 136.0s)
+    "drawtext=text='05 // 5-LAP URBAN CHAMPIONSHIP CIRCUIT & METROPOLIS':fontcolor=0x00E5FF:fontsize=28:x=60:y=h-78:enable='between(t,106.0,136.0)',"
+    "drawtext=text='Procedural multi-tier architecture, windowed towers, and asphalt tire adhesion':fontcolor=white:fontsize=20:x=60:y=h-42:enable='between(t,106.0,136.0)',"
     
-    # 7. Lower-Third 6: 1st Place Victory (136.0s - 146.5s)
-    "drawtext=text='06 // CHECKERED FLAG VICTORY • 1ST PLACE CHAMPION':fontcolor=0xFFD54F:fontsize=28:x=60:y=h-78:enable='between(t,136.0,146.5)',"
-    "drawtext=text='Seated VR comfort rating • Rock-solid 60+ FPS performance on Meta Quest':fontcolor=white:fontsize=20:x=60:y=h-42:enable='between(t,136.0,146.5)',"
+    # 7. Lower-Third 6: 1st Place Victory (137.0s - 148.0s)
+    "drawtext=text='06 // CHECKERED FLAG VICTORY • 1ST PLACE CHAMPION':fontcolor=0xFFD54F:fontsize=28:x=60:y=h-78:enable='between(t,137.0,148.0)',"
+    "drawtext=text='Seated VR comfort rating • Rock-solid 60+ FPS performance on Meta Quest':fontcolor=white:fontsize=20:x=60:y=h-42:enable='between(t,137.0,148.0)',"
     
-    # 8. Outro Card (146.5s - 156.5s)
-    "drawbox=x=0:y=0:w=iw:h=ih:color=black@0.90:t=fill:enable='gte(t,146.5)',"
-    "drawbox=x=120:y=80:w=iw-240:h=ih-160:color=0x00E5FF@0.7:t=2:enable='gte(t,146.5)',"
-    "drawtext=text='APEX DRIVE VR \\: COCKPIT PURSUIT':fontcolor=0x00E5FF:fontsize=52:x=(w-text_w)/2:y=130:enable='gte(t,146.5)',"
-    "drawtext=text='[ OFFICIAL ENTRY ] META VR START DEVELOPER COMPETITION 2026':fontcolor=0xFFD54F:fontsize=26:x=(w-text_w)/2:y=205:enable='gte(t,146.5)',"
-    "drawbox=x=250:y=255:w=iw-500:h=2:color=white@0.3:t=fill:enable='gte(t,146.5)',"
-    "drawbox=x=220:y=285:w=iw-440:h=120:color=white@0.08:t=fill:enable='gte(t,146.5)',"
-    "drawtext=text='META QUEST RELEASE CHANNEL (APP LAB INVITE URL)':fontcolor=0x80D8FF:fontsize=22:x=(w-text_w)/2:y=310:enable='gte(t,146.5)',"
-    "drawtext=text='https\\://www.meta.com/s/83yZYIoFL':fontcolor=white:fontsize=32:x=(w-text_w)/2:y=350:enable='gte(t,146.5)',"
-    "drawbox=x=220:y=435:w=iw-440:h=120:color=white@0.08:t=fill:enable='gte(t,146.5)',"
-    "drawtext=text='OPEN SOURCE C++ REPOSITORY & ARCHITECTURE':fontcolor=0xB9F6CA:fontsize=22:x=(w-text_w)/2:y=460:enable='gte(t,146.5)',"
-    "drawtext=text='github.com/mapoca1219/VrMpc-ApexDriveVR':fontcolor=white:fontsize=32:x=(w-text_w)/2:y=500:enable='gte(t,146.5)',"
-    "drawtext=text='Unreal Engine 5.8  •  Meta XR SDK  •  Chaos Physics  •  Native C++':fontcolor=0xB0BEC5:fontsize=24:x=(w-text_w)/2:y=620:enable='gte(t,146.5)',"
-    "drawtext=text='6DOF Virtual Steering  •  Diegetic OLED HUD  •  Dynamic AI & Police Combat':fontcolor=0xB0BEC5:fontsize=22:x=(w-text_w)/2:y=665:enable='gte(t,146.5)',"
-    "drawtext=text='THANK YOU JUDGES & META EVALUATION TEAM!':fontcolor=0xFFD54F:fontsize=30:x=(w-text_w)/2:y=760:enable='gte(t,146.5)'"
+    # 8. Outro Card (148.0s - 158.0s)
+    "drawbox=x=0:y=0:w=iw:h=ih:color=black@0.92:t=fill:enable='gte(t,148.0)',"
+    "drawbox=x=120:y=80:w=iw-240:h=ih-160:color=0x00E5FF@0.7:t=2:enable='gte(t,148.0)',"
+    "drawtext=text='APEX DRIVE VR \\: COCKPIT PURSUIT':fontcolor=0x00E5FF:fontsize=52:x=(w-text_w)/2:y=130:enable='gte(t,148.0)',"
+    "drawtext=text='[ OFFICIAL ENTRY ] META VR START DEVELOPER COMPETITION 2026':fontcolor=0xFFD54F:fontsize=26:x=(w-text_w)/2:y=205:enable='gte(t,148.0)',"
+    "drawbox=x=250:y=255:w=iw-500:h=2:color=white@0.3:t=fill:enable='gte(t,148.0)',"
+    "drawbox=x=220:y=285:w=iw-440:h=120:color=white@0.08:t=fill:enable='gte(t,148.0)',"
+    "drawtext=text='META QUEST RELEASE CHANNEL (APP LAB INVITE URL)':fontcolor=0x80D8FF:fontsize=22:x=(w-text_w)/2:y=310:enable='gte(t,148.0)',"
+    "drawtext=text='https\\://www.meta.com/s/83yZYIoFL':fontcolor=white:fontsize=32:x=(w-text_w)/2:y=350:enable='gte(t,148.0)',"
+    "drawbox=x=220:y=435:w=iw-440:h=120:color=white@0.08:t=fill:enable='gte(t,148.0)',"
+    "drawtext=text='OPEN SOURCE C++ REPOSITORY & ARCHITECTURE':fontcolor=0xB9F6CA:fontsize=22:x=(w-text_w)/2:y=460:enable='gte(t,148.0)',"
+    "drawtext=text='github.com/mapoca1219/VrMpc-ApexDriveVR':fontcolor=white:fontsize=32:x=(w-text_w)/2:y=500:enable='gte(t,148.0)',"
+    "drawtext=text='Unreal Engine 5.8  •  Meta XR SDK  •  Chaos Physics  •  Native C++':fontcolor=0xB0BEC5:fontsize=24:x=(w-text_w)/2:y=620:enable='gte(t,148.0)',"
+    "drawtext=text='6DOF Virtual Steering  •  Diegetic OLED HUD  •  Dynamic AI & Police Combat':fontcolor=0xB0BEC5:fontsize=22:x=(w-text_w)/2:y=665:enable='gte(t,148.0)',"
+    "drawtext=text='THANK YOU JUDGES & META EVALUATION TEAM!':fontcolor=0xFFD54F:fontsize=30:x=(w-text_w)/2:y=760:enable='gte(t,148.0)'"
     "[v_out];"
     
     # 3-Track Master Audio Mixing:
-    # 0: Game Audio (Engine, Tires, Sirens) @ 55%
-    # 1: Narrator Voice @ 150%
-    # 2: 128 BPM Synthwave Music @ 68%
-    "[0:a]volume=0.55[a_game];"
-    "[1:a]volume=1.50[a_narrator];"
-    "[2:a]volume=0.68[a_music];"
+    # 0: Game Audio (Engine, Tires, Sirens) @ 65%
+    # 1: Narrator Voice @ 145%
+    # 2: 128 BPM Synthwave Music @ 70%
+    "[0:a]volume=0.65[a_game];"
+    "[1:a]volume=1.45[a_narrator];"
+    "[2:a]volume=0.70[a_music];"
     "[a_game][a_narrator][a_music]amix=inputs=3:duration=first:dropout_transition=2[a_out]"
 )
 
@@ -120,11 +120,14 @@ cmd = [
     "-map", "[v_out]",
     "-map", "[a_out]",
     "-c:v", "libx264",
-    "-preset", "fast",
-    "-crf", "17",
+    "-preset", "slow",
+    "-crf", "18",
+    "-pix_fmt", "yuv420p",
+    "-movflags", "+faststart",
     "-c:a", "aac",
-    "-b:a", "256k",
-    "-t", "156.5",
+    "-b:a", "320k",
+    "-ar", "48000",
+    "-t", "158.0",
     OUTPUT_VIDEO
 ]
 

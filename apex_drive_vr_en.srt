@@ -1,0 +1,31 @@
+1
+00:00:01,000 --> 00:00:06,500
+Welcome to Apex Drive VR: next-generation high-speed combat racing built natively for Meta Quest.
+
+2
+00:00:11,500 --> 00:00:19,500
+Engage dual plasma nitro thrusters to break the 280 km/h speed barrier with real chassis dynamics.
+
+3
+00:00:31,000 --> 00:00:39,500
+Featuring 6DOF interactive steering, real-time diegetic telemetry, and spatial acoustics designed for seated VR comfort.
+
+4
+00:00:52,500 --> 00:01:00,000
+Battle multiple unique AI racing personalities that dynamically clip inside apexes and defend lane position.
+
+5
+00:01:13,500 --> 00:01:21,500
+Watch your mirrors: high-speed police interceptors actively contest your line with tactical lane blocking and PIT maneuvers.
+
+6
+00:01:50,000 --> 00:01:57,500
+Push your electric supercar to the absolute limit across a full five-lap urban championship circuit.
+
+7
+00:02:19,500 --> 00:02:27,000
+Cross the checkered flag as first-place champion, fully engineered for Meta Quest platform excellence.
+
+8
+00:02:28,000 --> 00:02:36,500
+Apex Drive VR: download now on the Meta Quest release channel and explore the open-source repository on GitHub.
